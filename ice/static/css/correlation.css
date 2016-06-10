@@ -1,0 +1,38 @@
+form {
+    font-size: 20px;
+    color: steelblue;
+}
+
+.chooses {
+
+}
+
+.choose-list {
+    float: left;
+    margin-right: 10px;
+}
+
+.selectric {
+     width: 180px;
+}
+
+.send {
+    margin: 23px 0 0 0;
+
+    width: 182px;
+    height: 40px;
+
+    background-color: #F8F8F8;
+    border: 1px solid #C4C4C4;
+}
+
+.ui-jqgrid {
+    clear: both;
+    margin-top: 20px;
+
+    height: 501px;
+    width: 950px;
+
+    left: 200px;
+    top: -300px;
+}

@@ -1,0 +1,40 @@
+{% load staticfiles %}
+{% load tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}"/>
+    {% block style %}{% endblock %}
+
+    <script type="text/javascript" src="{% static 'js/jquery-2.2.4.min.js' %}"></script>
+    {% block script %}{% endblock %}
+</head>
+<body>
+    <div class="header">
+        <img src="{% static 'img/logo.png' %}">
+        <div class="header-text"><b>Расчет ледовой обстановки Дальневосточных морей</b></div>
+    </div>
+    <div class="menu">
+        <ul>
+            <li><a href="{% url "sources" %}">Исходные данные</a></li>
+            <li><a href="{% url "mean" %}">Усредненные данные</a></li>
+            <li><a href="{% url "normal" %}">Нормированные данные</a></li>
+            <li><a href="{% url "correlation" %}">Корреляционные коэффициенты</a></li>
+            <li><a href="{% url "sources" %}">Поля корреляций</a></li>
+        </ul>
+    </div>
+    {% block content %}{% endblock %}
+    <div class="footer">
+        <div>
+            <p>Разработка системы</p>
+            <p>Костин Дмитрий</p>
+            <p>Группа Б8403а</p>
+            <p>2016г.</p>
+        </div>
+    </div>
+</body>
+</html>

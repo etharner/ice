@@ -1,0 +1,32 @@
+.data {
+    float: left;
+}
+
+.data-type {
+    margin: 10px 0 10px 0;
+
+    font-size: 20px;
+    color: steelblue;
+}
+
+.sea-tabs {
+    margin: 20px 0 20px 0;
+}
+
+.sea-tab, .sea-tab-active {
+    display: inline;
+
+    margin: 0;
+    padding: 10px;
+
+    border-width: 0  2px 2px 0;
+    border-style: solid;
+    border-color: lavender;
+    border-radius: 10px;
+
+    cursor: pointer;
+}
+
+.sea-tab-active {
+    background-color: #eeeef4;
+}

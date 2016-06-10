@@ -1,0 +1,96 @@
+{% extends 'ice/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Ice Report{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" type="text/css"  href="{% static 'css/redmond/jquery-ui.min.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/redmond/jquery-ui.structure.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/redmond/jquery-ui.theme.css' %}"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/ui.jqgrid.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/selectric.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/data.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/correlation.css' %}"/>
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.jqGrid.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/i18n/grid.locale-en.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/i18n/grid.locale-ru.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.selectric.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/correlation.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    {% load tags %}
+
+    <div class="data-type">{{ data_type }}</div>
+    <form action="{% url 'correlation' %}" method="get" class="filter">
+        {% csrf_token %}
+        <input class="first-year" type="hidden" value="{{ first_year }}">
+        <input class="first-dec" type="hidden"  value="{{ first_dec }}">
+        <input class="last-year" type="hidden"  value="{{ last_year }}">
+        <input class="last-dec"  type="hidden" value="{{ last_dec }}">
+        <div class="chooses">
+            <div class="choose-list">
+                <label for="sea1-choose">Первое море</label>
+                <select id="sea1-choose">
+                    <option>Берингово море</option>
+                    <option>Чукотское море</option>
+                    <option>Охотское море</option>
+                    <option>Японское море</option>
+            </select>
+            </div>
+            <div class="choose-list">
+                <label for="sea2-choose">Второе море</label>
+                <select id="sea2-choose">
+                    <option>Берингово море</option>
+                    <option>Чукотское море</option>
+                    <option>Охотское море</option>
+                    <option>Японское море</option>
+                </select>
+            </div>
+            <div class="choose-list">
+                <label for="year-choose">Год</label>
+                <select id="year-choose">
+                    {% for year in years %}
+                        <option>{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="choose-list">
+                <label for="dec1-choose">Начальная декада</label>
+                <select id="dec1-choose">
+                    {% for dec in decs %}
+                        <option>{{ dec }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="choose-list">
+                <label for="dec2-choose">Конечная декада</label>
+                <select id="dec2-choose">
+                    {% for dec in decs %}
+                        <option>{{ dec }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="choose-list">
+                <label for="prop-choose">Характеристика</label>
+                <select id="prop-choose">
+                    <option>Площадь</option>
+                    <option>Площадь с учетом сплоченности</option>
+                    <option>Объем</option>
+                </select>
+            </div>
+        </div>
+        <input class="send" type="button" value="Получить значения">
+    </form>
+    <table id="list"><tr><td></td></tr></table>
+    <div id="pager"></div>
+    <div class="data" data-cols-loc="{{ cols_loc }}" data-cols="{{ cols }}" data-data="{{ data }}">
+        <table id="list"><tr><td></td></tr></table>
+        <div id="pager"></div>
+    </div>
+{% endblock %}
