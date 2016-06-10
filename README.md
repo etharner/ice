@@ -5,7 +5,8 @@
 $ git clone https://github.com/etharner/ice.git
 ```
 
-You have to install Python 3.4+.\
+You have to install Python 3.4+.
+
 Required Python modules:
 - Django 1.8+
 - numpy
@@ -13,7 +14,8 @@ Required Python modules:
 - matplotlib
 - lxml
 
-Also install any server you want (for example, Apache or nginx).\
+Also install any server you want (for example, Apache or nginx).
+
 You must include path to WSGI (www/wsgi.py) in server's sites configuration.
 
 ## Apache2 example (/var/www/ice - project folder)
