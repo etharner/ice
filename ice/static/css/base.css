@@ -78,6 +78,12 @@ body {
     color: steelblue;
 }
 
+.content {
+    float: left;
+
+    width: 1030px;
+}
+
 .footer {
     float: left;
 

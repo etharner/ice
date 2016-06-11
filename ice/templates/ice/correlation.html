@@ -72,7 +72,9 @@
                 <label for="dec2-choose">Конечная декада</label>
                 <select id="dec2-choose">
                     {% for dec in decs %}
-                        <option>{{ dec }}</option>
+                        {% if dec != 1 %}
+                            <option>{{ dec }}</option>
+                        {% endif %}
                     {% endfor %}
                 </select>
             </div>
@@ -87,8 +89,14 @@
         </div>
         <input class="send" type="button" value="Получить значения">
     </form>
-    <table id="list"><tr><td></td></tr></table>
-    <div id="pager"></div>
+
+    <div class="hidden-img"></div>
+
+    <div class="grid">
+        <table id="list"><tr><td></td></tr></table>
+        <div id="pager"></div>
+    </div>
+
     <div class="data" data-cols-loc="{{ cols_loc }}" data-cols="{{ cols }}" data-data="{{ data }}">
         <table id="list"><tr><td></td></tr></table>
         <div id="pager"></div>

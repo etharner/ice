@@ -7,5 +7,6 @@ urlpatterns = [
     url(r'^sources$', views.sources, name='sources'),
     url(r'^mean$', views.mean, name='mean'),
     url(r'^normal$', views.normal, name='normal'),
-    url(r'^correlation$', views.correlation, name='correlation')
+    url(r'^correlation$', views.correlation, name='correlation'),
+    url(r'^ice/correlations/.*$', views.get_src, name='get_src')
 ]

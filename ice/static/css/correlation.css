@@ -3,36 +3,44 @@ form {
     color: steelblue;
 }
 
-.chooses {
-
-}
-
 .choose-list {
     float: left;
     margin-right: 10px;
 }
 
+.choose-list:last-child {
+    margin-top: 10px;
+}
+
 .selectric {
-     width: 180px;
+    margin-top: 5px;
+    width: 180px;
 }
 
 .send {
-    margin: 23px 0 0 0;
+    margin: 38px 0 0 0;
 
     width: 182px;
     height: 40px;
+
+    outline: none;
+    cursor: pointer;
 
     background-color: #F8F8F8;
     border: 1px solid #C4C4C4;
 }
 
-.ui-jqgrid {
-    clear: both;
-    margin-top: 20px;
+.hidden-img {
+    display: none;
+    margin: 0 auto;
 
-    height: 501px;
-    width: 950px;
+    width: 620px;
+    height: 620px;
+}
 
-    left: 200px;
-    top: -300px;
+.grid {
+    float: left;
+    margin-top: 10px;
+
+    width: 700px;
 }

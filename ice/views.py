@@ -98,15 +98,16 @@ def correlation(request):
 
             try:
                 coeffs = Estimation.pirson_coeff(
-                    sea1_data, sea2_data, sea1, sea2, year, range(dec1, dec2 + 2), range(dec1, dec2 + 2), prop
+                    sea1_data, sea2_data, sea1, sea2, year, range(dec1, dec2 + 1), range(dec1, dec2 + 1), prop
                 )
             except:
-                coeffs = [[0 for j in range(len(range(dec1, dec2 + 2)))] for i in range(len(range(dec1, dec2 + 2)))]
-            fname = graph.draw_correlation_field(coeffs, sea1, sea2, year, range(dec1, dec2 + 2), range(dec1, dec2 + 2), prop)
+                coeffs = [[0 for j in range(len(range(dec1, dec2 + 1)))] for i in range(len(range(dec1, dec2 + 1)))]
+            fname = graph.draw_correlation_field(coeffs, sea1, sea2, year, range(dec1, dec2 + 1), range(dec1, dec2 + 1), prop)
 
             return HttpResponse(json.dumps({
                 'coeffs': coeffs,
-                'imgfile': fname
+                'imgfile': fname,
+                'decrange': list(range(dec1, dec2 + 1))
             }), content_type="application/json")
 
     return render(
@@ -118,3 +119,8 @@ def correlation(request):
             'decs': range(1, 37)
         }
     )
+
+def get_src(request):
+    file = open('ice/report/correlation/' + request.path.split('/')[-1], 'rb')
+
+    return HttpResponse(content=file)

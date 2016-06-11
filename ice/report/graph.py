@@ -71,4 +71,4 @@ def draw_correlation_field(coeffs, sea1, sea2, last_year, decs1, decs2, field_na
     savefig('ice/report/correlation/' + gen_fname(sea1, sea2, last_year, decs1, field_name), bbox_inches='tight')
     #plt.show()
 
-    return 'ice/report/correlation/' + gen_fname(sea1, sea2, last_year, decs1, field_name) + '.png'
+    return 'ice/correlations/' + gen_fname(sea1, sea2, last_year, decs1, field_name) + '.svg'

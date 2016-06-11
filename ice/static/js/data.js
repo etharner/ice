@@ -86,17 +86,24 @@ $(function() {
     }
 
     var gridCols = prepGridCols();
-     $("#list").jqGrid({
+    var grid = $("#list");
+     grid.jqGrid({
          datatype: "local",
          height: 500,
-         width: 950,
+         width: 1030,
          colNames: gridCols['colNames'],
          colModel: gridCols['colModel'],
          data: [],
          rowNum: 100,
          pager: "#pager",
          viewrecords: true,
-         caption: "Ice Data"
+         caption: "Данные"
      });
+    grid.jqGrid('gridResize', {
+        minWidth: 350,
+        maxWidth: 1030,
+        minHeight: 400,
+        maxHeight: 1500
+    });
     $(".sea-tab[data-sea='" + 'bering' +"']").trigger("click");
 });

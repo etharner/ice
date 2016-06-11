@@ -11,6 +11,7 @@
 
 .sea-tabs {
     margin: 20px 0 20px 0;
+    padding: 0;
 }
 
 .sea-tab, .sea-tab-active {

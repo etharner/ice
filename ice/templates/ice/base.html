@@ -24,10 +24,9 @@
             <li><a href="{% url "mean" %}">Усредненные данные</a></li>
             <li><a href="{% url "normal" %}">Нормированные данные</a></li>
             <li><a href="{% url "correlation" %}">Корреляционные коэффициенты</a></li>
-            <li><a href="{% url "sources" %}">Поля корреляций</a></li>
         </ul>
     </div>
-    {% block content %}{% endblock %}
+    <div class="content">{% block content %}{% endblock %}</div>
     <div class="footer">
         <div>
             <p>Разработка системы</p>
