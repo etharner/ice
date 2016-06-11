@@ -65,9 +65,18 @@ def draw_correlation_field(coeffs, sea1, sea2, last_year, decs1, decs2, field_na
     ll, bb, ww, hh = CB.ax.get_position().bounds
     CB.ax.set_position([ll, b + 0.1 * h, ww, h * 0.8])
 
-    plt.title(create_title(sea1, sea2, decs1, field_name),
-        fontproperties=fm.FontProperties(fname = "ice/report/DejaVuSans.ttf")
-    )
+    rus_seas = {
+        'bering': 'Берингово море',
+        'chukchi': 'Чукотское море',
+        'okhotsk': 'Охотское море',
+        'japan': 'Японское море'
+    }
+
+    fontprop = fm.FontProperties(fname="ice/report/DejaVuSans.ttf")
+    plt.xlabel(rus_seas[sea1], fontproperties=fontprop)
+    plt.ylabel(rus_seas[sea2], fontproperties=fontprop)
+
+    plt.title(create_title(sea1, sea2, decs1, field_name), fontproperties=fontprop)
     savefig('ice/report/correlation/' + gen_fname(sea1, sea2, last_year, decs1, field_name), bbox_inches='tight')
     #plt.show()
 

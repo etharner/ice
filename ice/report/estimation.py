@@ -119,7 +119,7 @@ class Estimation:
         return 1 / (n - 1) * sum
 
     @staticmethod
-    def pirson_coeff(data2, data1, sea1, sea2, year, decs1, decs2, param):
+    def pirson_coeff(data2, data1, sea2, sea1, year, decs1, decs2, param):
         decs1, decs2 = sorted(decs1), sorted(decs2)
 
         Estimation.first_year = Estimation.start_shift(data1, data2, decs1, decs2)
