@@ -2,32 +2,37 @@ from html_parser import HTMLParser
 import csv_parser
 import prepare
 from estimation import Estimation
+import copy
 import graph
 import forecast
+from django.apps import apps
 
 
 class Data:
     seas = ['bering', 'chukchi', 'japan', 'okhotsk']
 
     def __init__(self):
-        self._bering_data = {}
-        self._chukchi_data = {}
-        self._japan_data = {}
-        self._okhotsk_data = {}
+        self.sea_data = {
+            'source': {},
+            'mean': {},
+            'normal': {}
+        }
+
+        for sea in self.seas:
+            self.sea_data['source'][sea] = self.parsed_data(sea)
+            self.sea_data['mean'][sea] = self.mean_data(sea, copy.deepcopy(self.sea_data['source'][sea]))
+            self.sea_data['normal'][sea] = self.normal_data(sea, copy.deepcopy(self.sea_data['mean'][sea]))
 
     def parsed_data(self, sea):
         return csv_parser.parse_data_csv(HTMLParser.parse_page()[sea])
 
-    def mean_data(self, sea):
-        parsed_data = self.parsed_data(sea)
+    def mean_data(self, sea, parsed_data):
         mean_data = prepare.decade_average(parsed_data)
         filled_data = prepare.fill_missed(mean_data, sea)
 
         return filled_data
 
-    def normal_data(self, sea):
-        mean_data = self.mean_data(sea)
-
+    def normal_data(self, sea, mean_data):
         return Estimation.normalize(mean_data, sea)
 
     def prep_data(self, sea):
@@ -45,38 +50,25 @@ class Data:
 
         return normalized_data
 
-    def data_processing(self):
-        _bering_data = self.prep_data(self.seas[0])
-        _chukchi_data = self.prep_data(self.seas[1])
-        _japan_data = self.prep_data(self.seas[2])
-        _okhotsk_data = self.prep_data(self.seas[3])
+    def data_processing(self, sea, year1, dec1, year2, dec2, prop):
+        forecast_data = {}
+        for year in range(year1, year2 + 1):
+            start_dec = dec1 if year == year1 else 1
+            end_dec = dec2 if year == year2 else 36
+            forecast_decs = {}
 
-        sea_data = {
-            'bering': self.mean_data(self.seas[0]),
-            'chukchi': self.mean_data(self.seas[1]),
-            'japan': self.mean_data(self.seas[2]),
-            'okhotsk': self.mean_data(self.seas[3])
-        }
+            for dec in range(start_dec, end_dec + 1):
+                cur_data = forecast.forecast(self.sea_data['mean'], prop, sea, dec, year, 10)
 
-        #print(forecast.forecast(sea_data, 'avg_conc', 'bering', 2, 2016, 10))
+                month_dec = Estimation.get_month_dec(dec)
+                if month_dec['month'] not in forecast_decs.keys():
+                    forecast_decs[month_dec['month']] = {}
+                forecast_decs[month_dec['month']][month_dec['dec']] = [cur_data[0], cur_data[1]]
 
+            forecast_data[year] = forecast_decs
 
-        #decs1 = range(1, 15 + 1)
-        #decs2 = range(1, 15 + 1)
-#
-        #coeffs = Estimation.pirson_coeff(
-        #    _bering_data, _chukchi_data, 'bering', 'chukchi', 2016, decs1, decs2, 'avg_conc'
-        #)
-        #graph.draw_correlation_field(coeffs, 'bering', 'chukchi', 2016, decs1, decs2, 'avg_conc')
-
-        #coeffs = Estimation.pirson_coeff(
-         #   _bering_data, _chukchi_data, 'bering', 'chukchi', 2011, decs1, decs2, 'avg_vol'
-        #)
-        #graph.draw_correlation_field(coeffs, 'bering', 'chukchi', 2011, decs1, decs2, 'avg_vol')
-
-
-        #for i in range(len(decs1)):
-         #   print(str(coeffs[i]))
+        print(forecast_data)
+        return forecast_data
 
     def print_data_to_file(self, data, file_name):
         with open('processed/' + file_name, 'w') as f:

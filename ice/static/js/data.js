@@ -64,23 +64,22 @@ $(function() {
         var table_data = [];
         var rowid = 1;
         for (var year in gridData)
-                if (gridData.hasOwnProperty(year))
-                    for (var month in gridData[year])
-                        if (gridData[year].hasOwnProperty(month))
-                            for (var day_dec in gridData[year][month])
-                                if (gridData[year][month].hasOwnProperty(day_dec)) {
-                                    var data_dump = gridData[year][month][day_dec];
-                                    var table_row = {
-                                       // invid: String(rowid),
-                                        date: year + "-" + month + "-" + day_dec
-                                    };
-                                    for (var key in data_dump)
-                                        if (data_dump.hasOwnProperty(key))
-                                            table_row[key] = String(data_dump[key]);
-                                    table_data.push(table_row);
-
-                                    rowid++;
-                                }
+            if (gridData.hasOwnProperty(year))
+                for (var month in gridData[year])
+                    if (gridData[year].hasOwnProperty(month))
+                        for (var day_dec in gridData[year][month])
+                            if (gridData[year][month].hasOwnProperty(day_dec)) {
+                                var data_dump = gridData[year][month][day_dec];
+                                var table_row = {
+                                    // invid: String(rowid),
+                                    date: year + "-" + month + "-" + day_dec
+                                };
+                                for (var key in data_dump)
+                                    if (data_dump.hasOwnProperty(key))
+                                        table_row[key] = String(data_dump[key]);
+                                table_data.push(table_row);
+                                rowid++;
+                            }
 
         return table_data
     }

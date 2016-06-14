@@ -8,5 +8,6 @@ urlpatterns = [
     url(r'^mean$', views.mean, name='mean'),
     url(r'^normal$', views.normal, name='normal'),
     url(r'^correlation$', views.correlation, name='correlation'),
-    url(r'^ice/correlations/.*$', views.get_src, name='get_src')
+    url(r'^ice/correlations/.*$', views.get_src, name='get_src'),
+    url(r'^forecast$', views.forecast, name='forecast')
 ]

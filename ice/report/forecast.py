@@ -2,28 +2,23 @@ import itertools
 from estimation import Estimation as est
 
 
-def max_corr(data, field_name, k, t, last_year, pair_coeffs):
+def max_corr(data, k, t, last_year, pair_coeffs):
     max_val = 0
     for l in data.keys():
-        for u in range(1, t):
-            #coeffs = est.pirson_coeff(
-            #    data[k], data[l], k, l, last_year, range(1, t + 2), range(1, u + 2), field_name
-            #)
-            coeffs = pair_coeffs[(k, l)]
-            if abs(coeffs[t][u]) > max_val:
-                max_val = coeffs[t][u]
+        if l != k:
+            for u in range(0, t):
+                coeffs = pair_coeffs[(k, l)]
+                if abs(coeffs[t][u]) > max_val:
+                    max_val = coeffs[t][u]
 
     return max_val
 
 
-def calc_weight(data, field_name, k, t, l ,u, last_year, pair_coeffs):
-    #k_l_coeffs = est.pirson_coeff(
-    #    data[k], data[l], k, l, last_year, range(1, t + 2), range(1, u + 2), field_name
-    #)
+def calc_weight(data, k, t, l, u, last_year, pair_coeffs):
     k_l_coeffs = pair_coeffs[(k, l)]
 
     indicator = 0
-    max = max_corr(data, field_name, k, t, last_year, pair_coeffs)
+    max = max_corr(data, k, t, last_year, pair_coeffs)
     if k_l_coeffs[t][u] > 0.9 * max:
         indicator = 1
 
@@ -81,18 +76,23 @@ def chosen_rates(data, field_name, k, t, jb, je, l, u, ib, ie, last_year):
         return 0
 
 
-def calc_rates(data, field_name, k, t, jb, je, l, u, last_year, prec, pair_coeffs, num):
+def calc_rates(data, field_name, k, t, jb, je, l, u, last_year, prec, pair_coeffs, num, global_probs):
+    if t == 0:
+        return 1
     max_val_l = est.find_max_val(data[l], field_name)
     states_l = [(max_val_l / prec * i) for i in range(prec + 1)]
 
     rates_sum = 0
     for i in range(len(states_l) - 1):
         rates = chosen_rates(data, field_name, k, t, jb, je, l, u, states_l[i], states_l[i + 1], last_year)
-        cur_prob = get_prob(data, field_name, l, u, states_l[i], states_l[i + 1], last_year, prec, pair_coeffs, num + 1)
-        rates_sum += rates * cur_prob
+        if (states_l[i], states_l[i + 1]) not in global_probs[l][u].keys():
+            global_probs[l][u][(states_l[i], states_l[i + 1])] = \
+                get_prob(data, field_name, l, u, states_l[i], states_l[i + 1], last_year, prec, pair_coeffs, num + 1, global_probs)
 
-        if cur_prob > 0:
-            print(cur_prob)
+        rates_sum += rates * global_probs[l][u][(states_l[i], states_l[i + 1])]
+
+        #if cur_prob > 0:
+           # print(cur_prob)
 
     #if num == 1:
         #print('test')
@@ -100,20 +100,25 @@ def calc_rates(data, field_name, k, t, jb, je, l, u, last_year, prec, pair_coeff
     return rates_sum
 
 
-def get_prob(data, field_name, sea, dec, jb, je, last_year, prec, pair_coeffs, num):
+def get_prob(data, field_name, sea, dec, jb, je, last_year, prec, pair_coeffs, num, global_probs):
     weighted = 0
     weight_rates = 0
     #print(dec)
-    for u in range(1, dec):
+    if dec == 0:
+        for l in data.keys():
+            weighted += calc_weight(data, sea, dec, l, 0, last_year, pair_coeffs)
+            return 1 / (weighted if weighted > 0 else 1)
+
+    for u in range(0, dec):
         for l in data.keys():#filter(lambda s: s != sea, data.keys()):
-            weighted += calc_weight(data, field_name, sea, dec, l, u, last_year, pair_coeffs)
-            weight_rates += weighted * calc_rates(data, field_name, sea, dec, jb, je, l, u, last_year, prec, pair_coeffs, num)
+            weighted += calc_weight(data, sea, dec - 1, l, u, last_year, pair_coeffs)
+            weight_rates += weighted * calc_rates(data, field_name, sea, dec - 1, jb, je, l, u, last_year, prec, pair_coeffs, num, global_probs)
             #print(weight_rates)
 
-    try:
-        result = 1 / weighted * weight_rates
-    except:
-        result = 0
+   # try:
+    result = 1 / weighted * weight_rates
+    #except:
+       # result = 0
 
     return result
 
@@ -127,7 +132,7 @@ def forecast(data, field_name, sea, dec, last_year, prec):
     for sea_pair in sea_pairs:
         sea1, sea2 = sea_pair[0], sea_pair[1]
         pair_coeffs[sea_pair] = est.pirson_coeff(
-            data[sea2], data[sea1], sea2, sea1, last_year, range(1, dec + 2), range(1, dec + 2), field_name
+            data[sea2], data[sea1], sea2, sea1, last_year, range(1, dec + 1), range(1, dec + 1), field_name
         )
 
 
@@ -135,10 +140,17 @@ def forecast(data, field_name, sea, dec, last_year, prec):
     print(max_val_k)
     states_k = [(max_val_k / prec * i) for i in range(prec + 1)]
 
+    global_probs = {}
+    for k in data.keys():
+        cur_glob_probs = {}
+        for d in range(0, dec):
+            cur_glob_probs[d] = {}
+        global_probs[k] = cur_glob_probs
+
     probs = {}
     for j in range(len(states_k) - 1):
-        print(str(states_k[j]) + ' | ' + str(states_k[j + 1]))
-        p = get_prob(data, field_name, sea, dec, states_k[j], states_k[j + 1], last_year, prec, pair_coeffs, 1)
+        p = get_prob(data, field_name, sea, dec, states_k[j], states_k[j + 1], last_year, prec, pair_coeffs, 1, global_probs)
         probs[(states_k[j], states_k[j + 1])] = p
+        print(str(states_k[j]) + ' | ' + str(states_k[j + 1]) + '| ' + str(p))
 
     return max(probs, key=probs.get)
