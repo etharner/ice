@@ -10,11 +10,12 @@
 }
 
 .sea-tabs {
+    float: left;
     margin: 20px 0 20px 0;
     padding: 0;
 }
 
-.sea-tab, .sea-tab-active {
+.sea-tab, .sea-tab-active, #csv-download {
     display: inline;
 
     margin: 0;
@@ -30,4 +31,12 @@
 
 .sea-tab-active {
     background-color: #eeeef4;
+}
+
+#csv-download {
+    float: right;
+    margin: 10px 0 8px 0;
+
+    text-decoration: none;
+    color: black;
 }

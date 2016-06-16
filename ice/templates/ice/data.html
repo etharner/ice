@@ -23,13 +23,17 @@
 {% block content %}
     {% load tags %}
 
-    <div class="data-type">{{ data_type }}</div>
+    <div class="data-type">{{ data_type_tr }}</div>
     <ul class="sea-tabs">
         <li class="sea-tab" data-sea="bering">Берингово море</li>
         <li class="sea-tab" data-sea="chukchi">Чукотское море</li>
         <li class="sea-tab" data-sea="japan">Японское море</li>
         <li class="sea-tab" data-sea="okhotsk">Охотское море</li>
     </ul>
+
+    <input id="input-data-type" type="hidden" data-data-type={{ data_type }}>
+    <a id="csv-download" href="{% url 'get_data_src' 'bering' data_type %}">Скачать таблицу</a>
+
     <div class="data" data-cols-loc="{{ cols_loc }}" data-cols="{{ cols }}" data-data="{{ data }}">
         <table id="list"><tr><td></td></tr></table>
         <div id="pager"></div>

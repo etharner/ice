@@ -20,8 +20,13 @@ class Data:
 
         for sea in self.seas:
             self.sea_data['source'][sea] = self.parsed_data(sea)
+            self.load_to_csv('source')
+
             self.sea_data['mean'][sea] = self.mean_data(sea, copy.deepcopy(self.sea_data['source'][sea]))
+            self.load_to_csv('mean')
+
             self.sea_data['normal'][sea] = self.normal_data(sea, copy.deepcopy(self.sea_data['mean'][sea]))
+            self.load_to_csv('normal')
 
     def parsed_data(self, sea):
         return csv_parser.parse_data_csv(HTMLParser.parse_page()[sea])
@@ -34,6 +39,22 @@ class Data:
 
     def normal_data(self, sea, mean_data):
         return Estimation.normalize(mean_data, sea)
+
+    def load_to_csv(self, data_type):
+        data = self.sea_data[data_type]
+
+        for sea in data.keys():
+            with open('ice/report/data/' + data_type + '/' + sea + '_' + data_type + '.csv', 'w') as fo:
+                fo.write('date;area;conc;vol\n')
+                for year in sorted(data[sea]):
+                    for month in sorted(data[sea][year]):
+                        for dec in sorted(data[sea][year][month]):
+                            cur_data = data[sea][year][month][dec]
+                            cur_date = str(year) + '-' + str(month) + '-' + str(dec) + ';'
+                            cur_vals = str(cur_data['area' if data_type == 'source' else 'avg_area']) + ';' +\
+                                       str(cur_data['conc' if data_type == 'source' else 'avg_conc']) + ';' +\
+                                       str(cur_data['vol' if data_type == 'source' else 'avg_vol'])
+                            fo.write(cur_date + cur_vals + '\n')
 
     def prep_data(self, sea):
         parsed_data = csv_parser.parse_data_csv(HTMLParser.parse_page()[sea])

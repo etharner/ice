@@ -118,6 +118,18 @@ $(function () {
                 var divimg = $(".hidden-img");
                 divimg.find(':first-child').remove();
 
+                $("#zip-download").remove();
+                var zip = $('<a id="zip-download">');
+                zip.attr("href", data.zipfile);
+                zip.text("Скачать архив");
+                zip.appendTo("form");
+
+                $("#csv-download").remove();
+                var csv = $('<a id="csv-download">');
+                csv.attr("href", data.csvfile);
+                csv.text("Скачать таблицу");
+                csv.appendTo(".content");
+
                 var img = $('<object id="corr-field">');
                 img.attr("type", "image/svg+xml");
                 img.attr("data", data.imgfile);

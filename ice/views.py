@@ -2,7 +2,9 @@ from django.shortcuts import render
 from django.apps import apps
 import json
 import datetime
-from ice.report.data import Data
+import re
+import zipfile
+from os.path import basename
 from ice.report.estimation import Estimation
 from django.shortcuts import HttpResponse
 import graph
@@ -15,7 +17,7 @@ def prepare_response_data(method, sea_name):
 
     data = app_data.data.sea_data
 
-    return data.sea_data[method][sea_name]
+    return data[method][sea_name]
 
 
 def proceed_response(request, method, cols_loc, cols):
@@ -37,7 +39,8 @@ def proceed_response(request, method, cols_loc, cols):
     }
 
     return render(request, 'ice/data.html', {
-        'data_type': data_types[method],
+        'data_type': method,
+        'data_type_tr': data_types[method],
         'cols_loc': cols_loc,
         'cols': cols
     })
@@ -46,7 +49,7 @@ def proceed_response(request, method, cols_loc, cols):
 def sources(request):
     return proceed_response(
         request,
-        "source",
+        'source',
         json.dumps(['Год-Месяц-День', 'Площадь', 'Площадь с учетом сплоченности', 'Объем']),
         json.dumps(['area', 'conc', 'vol'])
     )
@@ -55,7 +58,7 @@ def sources(request):
 def mean(request):
     return proceed_response(
         request,
-        "mean",
+        'mean',
         json.dumps(['Год-Месяц-Декада', 'Средняя площадь', 'Средняя площадь с учетом сплоченности', 'Средний объем']),
         json.dumps(['avg_area', 'avg_conc', 'avg_vol'])
     )
@@ -64,7 +67,7 @@ def mean(request):
 def normal(request):
     return proceed_response(
         request,
-        "normal",
+        'normal',
         json.dumps(['Год-Месяц-Декада', 'Площадь', 'Площадь с учетом сплоченности', 'Объем']),
         json.dumps(['avg_area', 'avg_conc', 'avg_vol'])
     )
@@ -104,9 +107,33 @@ def correlation(request):
                 coeffs = [[0 for j in range(len(range(dec1, dec2 + 1)))] for i in range(len(range(dec1, dec2 + 1)))]
             fname = graph.draw_correlation_field(coeffs, sea1, sea2, year, range(dec1, dec2 + 1), range(dec1, dec2 + 1), prop)
 
+            real_name = re.sub(r'.+/img/(.+)\.svg', r'\1', fname)
+            real_img = re.sub(r'(.+)/correlation/(.+)\.svg', r'\1/report/correlation/\2.svg', fname)
+            real_csv = re.sub(r'(.+)/correlation/img/(.+)\.svg', r'\1/report/correlation/data/\2.csv', fname)
+
+            download_csv = re.sub(r'(.+)/img/(.+)\.svg', r'\1/data/\2.csv', fname)
+            with open(real_csv, 'w') as fo:
+                fo.write('dec;')
+                for i in range(len(range(dec1, dec2 + 1))):
+                    fo.write(str(i) + ';')
+                fo.write('\n')
+                for i in range(len(range(dec1, dec2 + 1))):
+                    fo.write(str(i) + ';')
+                    for j in range(len(range(dec1, dec2 + 1))):
+                        fo.write(str(coeffs[i][j]) + ';')
+                    fo.write('\n')
+
+            zip = zipfile.ZipFile('ice/report/correlation/zip/' + real_name + '.zip', 'w')
+            zip.write(real_img, basename(real_img))
+            zip.write(real_csv, basename(real_csv))
+            zip.close()
+            download_zip = 'ice/correlation/zip/' + real_name + '.zip'
+
             return HttpResponse(json.dumps({
                 'coeffs': coeffs,
                 'imgfile': fname,
+                'csvfile': download_csv,
+                'zipfile': download_zip,
                 'decrange': list(range(dec1, dec2 + 1))
             }), content_type="application/json")
 
@@ -121,12 +148,6 @@ def correlation(request):
     )
 
 
-def get_src(request):
-    file = open('ice/report/correlation/' + request.path.split('/')[-1], 'rb')
-
-    return HttpResponse(content=file)
-
-
 def forecast(request):
     if request.method == 'GET':
         if request.GET.get('action') == 'forecast':
@@ -138,8 +159,23 @@ def forecast(request):
             prop = rus_prop[request.GET.get('prop')]
 
             data = apps.get_app_config('ice').data.data_processing(sea, year1, dec1, year2, dec2, prop)
+
+            real_name = 'ice/report/forecast/fcst_' + sea + '_' + str(year1) + '_' + str(dec1) + '-' +\
+                str(year2) + '_' + str(dec2) + '_' + prop + '.csv'
+            with open(real_name, 'w') as fo:
+                fo.write('date;val\n')
+                for year in sorted(data):
+                    for month in sorted(data[year]):
+                        for dec in sorted(data[year][month]):
+                            cur_data = data[year][month][dec]
+                            cur_date = str(year) + '-' + str(month) + '-' + str(dec) + ';'
+                            cur_vals = str(cur_data[0]) + '-' + str(cur_data[1])
+                            fo.write(cur_date + cur_vals + '\n')
+            download_name = 'ice/forecast/' + re.sub(r'.+forecast/(.+)', r'\1', real_name)
+
             return HttpResponse(json.dumps({
                 'data': data,
+                'csvfile': download_name
             }), content_type="application/json")
 
     return render(
@@ -152,3 +188,33 @@ def forecast(request):
             'decs': range(1, 37)
         }
     )
+
+
+def get_data_src(request, sea, data_type):
+    file = open('ice/report/data/' + data_type + '/' + sea + '_' + data_type + '.csv', 'r')
+
+    return HttpResponse(content=file, content_type='application/octet-stream')
+
+
+def get_corr_img(request):
+    file = open('ice/report/correlation/img/' + request.path.split('/')[-1], 'rb')
+
+    return HttpResponse(content=file)
+
+
+def get_corr_src(request):
+    file = open('ice/report/correlation/data/' + request.path.split('/')[-1], 'rb')
+
+    return HttpResponse(content=file, content_type='application/octet-stream')
+
+
+def get_corr_zip(request):
+    file = open('ice/report/correlation/zip/' + request.path.split('/')[-1], 'rb')
+
+    return HttpResponse(content=file, content_type='application/octet-stream')
+
+
+def get_forecast(request):
+    file = open('ice/report/forecast/' + request.path.split('/')[-1], 'rb')
+
+    return HttpResponse(content=file, content_type='application/octet-stream')

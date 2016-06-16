@@ -132,6 +132,12 @@ $(function () {
                 button.val(old);
 
                 build_grid(data.data);
+                
+                $("#csv-download").remove();
+                var csv = $('<a id="csv-download">');
+                csv.attr("href", data.csvfile);
+                csv.text("Скачать таблицу");
+                csv.appendTo(".content");
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 button.prop("disabled", false);

@@ -4,6 +4,18 @@ $(function() {
         if (!clickedElem.hasClass("sea-tab-active"))
             clickedElem.addClass("sea-tab-active");
 
+        var sea = clickedElem.text();
+        var en_seas = {
+            'Берингово море': 'bering',
+            'Чукотское море': 'chukchi',
+            'Японское море': 'japan',
+            'Охотское море': 'okhotsk'
+        };
+        var en_sea = en_seas[sea];
+        var data_type = $("#input-data-type").data("data-type");
+        var new_href = new RegExp(/^.*\//).exec(window.location.href) + 'ice/data/' + en_sea + '_' + data_type + '.csv';
+        $("#csv-download").attr("href", new_href);
+
         $(".sea-tab").each(function(i) {
             if (!$(this).is(clickedElem[0]))
                 if ($(this).hasClass("sea-tab-active"))
