@@ -1,6 +1,7 @@
 from scipy.interpolate import interp1d
 from math import sqrt
 
+
 class Estimation:
     sea_area = {
         'bering': 2315000,
@@ -35,21 +36,89 @@ class Estimation:
     def get_month_dec(dec):
         from math import ceil
 
-        month =  ceil(dec / 3)
+        month = ceil(dec / 3)
         month_dec = 3 if dec % 3 == 0 else dec % 3
 
         return {
             'month': month,
             'dec': month_dec
         }
-    
+
+    @staticmethod
+    def get_season_date(year, month, dec):
+        cur_year = year if month >= 9 else year - 1
+        cur_month = 9
+        cur_dec = 1
+        season_year = year if month >= 9 else year - 1
+        season_month = 1
+        season_dec = 1
+
+        while 1:
+            if cur_year == year and cur_month == month and cur_dec == dec:
+                break
+            cur_dec += 1
+            season_dec += 1
+            if cur_dec > 3:
+                cur_month += 1
+                cur_dec = 1
+                if cur_month > 12:
+                    cur_year += 1
+                    cur_month = 1
+
+            if season_dec > 3:
+                season_month += 1
+                season_dec = 1
+                if season_month > 12:
+                    season_year += 1
+                    season_month = 1
+
+        return {
+            'year': season_year,
+            'month': season_month,
+            'dec': season_dec
+        }
+
+    @staticmethod
+    def get_season_dec(dec):
+        month = 9
+        month_dec = 1
+        season_dec = 1
+
+        while Estimation.get_year_dec(month, month_dec) != dec:
+            month_dec += 1
+            if month_dec > 3:
+                month += 1
+                month_dec = 1
+            if month > 12:
+                month = 1
+            season_dec += 1
+
+        return season_dec
+
+    @staticmethod
+    def get_base_dec(dec):
+        month = 9
+        month_dec = 1
+        season_dec = 1
+
+        while season_dec < dec:
+            month_dec += 1
+            if month_dec > 3:
+                month += 1
+                month_dec = 1
+            if month > 12:
+                month = 1
+            season_dec += 1
+
+        return Estimation.get_year_dec(month, month_dec) - 1
+
     @staticmethod
     def get_local_date(global_dec):
         global_dec -= 1
         year = Estimation.first_year + global_dec // 36
         month_dec = Estimation.get_month_dec(global_dec % 36 + 1)
 
-        return { 'year': year, 'month': month_dec['month'], 'dec': month_dec['dec'] }
+        return {'year': year, 'month': month_dec['month'], 'dec': month_dec['dec']}
 
     @staticmethod
     def lin_interpolation(x, y):
@@ -89,7 +158,7 @@ class Estimation:
     def iciness(data, sea):
         if data == 0.0:
             return 0.0
-        #return data
+        # return data
         return data / Estimation.sea_area[sea]
 
     @staticmethod
@@ -101,22 +170,25 @@ class Estimation:
             except:
                 print("asd")
 
-        return sum / (year - Estimation.first_year + 1)
+        try:
+            return sum / (year - Estimation.first_year + 1)
+        except:
+            print('asd')
 
     @staticmethod
     def avg_iciness_dev(data, year, month_dec, sea, param):
         sum = 0
         avg_iciness = Estimation.avg_iciness(data, year, month_dec, sea, param)
         for t in range(Estimation.first_year, year + 1):
-            try:
-                sum += (Estimation.iciness(data[t][month_dec['month']][month_dec['dec']][param], sea) -
-                    avg_iciness)**2
-            except:
-                print('asdsad')
+            iceness = Estimation.iciness(data[t][month_dec['month']][month_dec['dec']][param], sea)
+            if Estimation.first_year == year:
+                sum += avg_iciness ** 2
+            else:
+                sum += (iceness - avg_iciness) ** 2
 
         n = year - Estimation.first_year + 1
 
-        return 1 / (n - 1) * sum
+        return 1 / n * sum
 
     @staticmethod
     def pirson_coeff(data2, data1, sea2, sea1, year, decs1, decs2, param):
@@ -143,9 +215,12 @@ class Estimation:
 
                     sum = 0
                     for t in range(Estimation.first_year, year + 1):
-                       icinecc1 = Estimation.iciness(data1[t][month_dec1['month']][month_dec1['dec']][param], sea1)
-                       icinecc2 = Estimation.iciness(data2[t][month_dec2['month']][month_dec2['dec']][param], sea2)
-                       sum += (icinecc1 - avg_icinecc1) * (icinecc2 - avg_icinecc2)
+                        icinecc1 = Estimation.iciness(data1[t][month_dec1['month']][month_dec1['dec']][param], sea1)
+                        icinecc2 = Estimation.iciness(data2[t][month_dec2['month']][month_dec2['dec']][param], sea2)
+                        if Estimation.first_year == year:
+                            sum += avg_icinecc1 * avg_icinecc2
+                        else:
+                            sum += (icinecc1 - avg_icinecc1) * (icinecc2 - avg_icinecc2)
 
                     res *= sum
 
@@ -165,8 +240,6 @@ class Estimation:
         for year in data:
             for month in data[year]:
                 for dec in data[year][month]:
-                    if data[year][month][dec][field] < 0:
-                        print("SDASDASD")
                     if data[year][month][dec][field] > max_val:
                         max_val = data[year][month][dec][field]
 

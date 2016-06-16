@@ -4,7 +4,7 @@ import prepare
 from estimation import Estimation
 import copy
 import graph
-import forecast
+from forecast import Forecast
 from django.apps import apps
 
 
@@ -79,9 +79,13 @@ class Data:
             forecast_decs = {}
 
             for dec in range(start_dec, end_dec + 1):
-                cur_data = forecast.forecast(self.sea_data['mean'], prop, sea, dec, year, 10)
-
                 month_dec = Estimation.get_month_dec(dec)
+                season_date = Estimation.get_season_date(year, month_dec['month'], month_dec['dec'])
+                season_date_glob_dec = Estimation.get_year_dec(season_date['month'], season_date['dec'])
+                f = Forecast()
+                cur_data = f.forecast(self.sea_data['mean'], prop, sea, season_date_glob_dec, season_date['year'], 10)
+
+
                 if month_dec['month'] not in forecast_decs.keys():
                     forecast_decs[month_dec['month']] = {}
                 forecast_decs[month_dec['month']][month_dec['dec']] = [cur_data[0], cur_data[1]]
@@ -90,10 +94,3 @@ class Data:
 
         print(forecast_data)
         return forecast_data
-
-    def print_data_to_file(self, data, file_name):
-        with open('processed/' + file_name, 'w') as f:
-            for y in data.keys():
-                for m in data[y].keys():
-                    for d in data[y][m].keys():
-                        f.write(str(y) + '/' + str(m) + '/' + str(d) + '\n' + str(data[y][m][d]) + '\n')
