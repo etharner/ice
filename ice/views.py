@@ -115,7 +115,7 @@ def correlation(request):
         'ice/correlation.html',
         {
             'data_type': 'Коэффициенты корреляции между парой морей',
-            'years': range(1997, datetime.date.today().year + 1),
+            'years': range(2000, datetime.date.today().year + 1),
             'decs': range(1, 37)
         }
     )
@@ -147,8 +147,8 @@ def forecast(request):
         'ice/forecast.html',
         {
             'data_type': 'Прогнозирование ледовой обстановки',
-            'start_years': range(1997, datetime.date.today().year + 1),
-            'end_years': range(1997, 2021),
+            'start_years': range(2000, datetime.date.today().year + 1),
+            'end_years': range(2000, 2021),
             'decs': range(1, 37)
         }
     )
