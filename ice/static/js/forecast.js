@@ -134,8 +134,11 @@ $(function () {
                 build_grid(data.data);
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                alert(xhr.status);
-                alert(thrownError);
+                button.prop("disabled", false);
+                button.val(old);
+
+                console.log(xhr.status);
+                console.log(thrownError);
             }
         });
     });

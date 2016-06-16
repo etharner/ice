@@ -29,8 +29,8 @@ $(function() {
                 grid.trigger("reloadGrid");
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                alert(xhr.status);
-                alert(thrownError);
+                console.log(xhr.status);
+                console.log(thrownError);
             }
         });
     });
