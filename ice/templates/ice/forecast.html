@@ -30,10 +30,6 @@
     <div class="data-type">{{ data_type }}</div>
     <form action="{% url 'correlation' %}" method="get" class="filter">
         {% csrf_token %}
-        <input class="first-year" type="hidden" value="{{ first_year }}">
-        <input class="first-dec" type="hidden"  value="{{ first_dec }}">
-        <input class="last-year" type="hidden"  value="{{ last_year }}">
-        <input class="last-dec"  type="hidden" value="{{ last_dec }}">
         <div class="chooses">
             <div class="choose-list">
                 <label for="sea-choose">Море</label>
