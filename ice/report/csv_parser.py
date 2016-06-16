@@ -60,6 +60,7 @@ def parse_data_csv(fnames):
 
     return old_data
 
+
 def parse_zeros_csv():
     data = {}
 
