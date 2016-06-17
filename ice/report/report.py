@@ -39,9 +39,9 @@ def get_report(quater, year, checked):
 
         with doc.create(Subsection(bold(intro), numbering=False)):
             doc.append(italic('Цель: '))
-            doc.append(purp)
+            doc.append(purp.encode('cp1252'))
             doc.append(italic('Задачи: '))
-            doc.append(task)
+            doc.append(task.encode('cp1252'))
 
         data = apps.get_app_config('ice').data.sea_data
         rus_sea = {
@@ -55,7 +55,7 @@ def get_report(quater, year, checked):
             if checked[sea]['source']:
                 msg = 'Была расчитана площадь ' + rus_sea[sea] + ('ова' if sea == 'bering' else 'ого') +\
                 ' моря в каждой декаде\n'
-                doc.append(msg)
+                doc.append(msg.encode('cp1252'))
                 with doc.create(Tabular('|l|c|')) as table:
                     table.add_hline()
                     table.add_row(('Дата', 'Площадь льда, кв. км'))
@@ -75,7 +75,7 @@ def get_report(quater, year, checked):
             if checked[sea]['mean']:
                 msg = 'Была расчитана средняя площадь ' + rus_sea[sea] + ('ова' if sea == 'bering' else 'ого') +\
                 ' моря в каждой декаде\n'
-                doc.append(msg)
+                doc.append(msg.encode('cp1252'))
                 with doc.create(Tabular('|l|c|')) as table:
                     table.add_hline()
                     table.add_row(('Дата', 'Площадь льда, кв. км'))
@@ -96,7 +96,7 @@ def get_report(quater, year, checked):
                 msg = 'Для анализа зависимостей развития ледовой обстановки в ' +\
                 rus_sea[sea] + ('овом' if sea == 'bering' else 'ом') + ' море были вычислены декадные ' +\
                 'корреляции попарно с остальными бассейнами'
-                doc.append(msg)
+                doc.append(msg.encode('cp1252'))
 
                 sea_pairs = []
                 for pair in itertools.product(data['normal'].keys(), repeat=2):
