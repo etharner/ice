@@ -13,4 +13,6 @@ urlpatterns = [
     url(r'^ice/correlation/zip/.*$', views.get_corr_zip, name='get_corr_zip'),
     url(r'^forecast$', views.forecast, name='forecast'),
     url(r'^ice/forecast/.*$', views.get_forecast, name='get_forecast'),
+    url(r'^report$', views.report, name='report'),
+    url(r'^ice/report/.*$', views.get_pdf, name='get_pdf')
 ]

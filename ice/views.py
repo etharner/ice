@@ -8,6 +8,7 @@ from os.path import basename
 from ice.report.estimation import Estimation
 from django.shortcuts import HttpResponse
 import graph
+import report as r
 
 
 def prepare_response_data(method, sea_name):
@@ -190,6 +191,39 @@ def forecast(request):
     )
 
 
+def report(request):
+    if request.method == 'GET':
+        if request.GET.get('action') == 'report':
+            rome_num = {'I': 1, 'II': 2, 'III': 3, 'IV': 4}
+            quater = rome_num[request.GET.get('quater')]
+            year = int(request.GET.get('year'))
+
+            checked = {}
+            for sea in ['bering', 'chukchi', 'japan', 'okhotsk']:
+                if sea not in checked.keys():
+                    checked[sea] = {}
+                for prop in ['source', 'mean', 'corr', 'forecast']:
+                    checked[sea][prop] = request.GET.get('checked[' + sea + '][' + prop + ']')
+
+            fname = r.get_report(quater, year, checked)
+            return HttpResponse(json.dumps({
+                'pdf': 'ice/report/' + fname + '.pdf'
+            }), content_type="application/json")
+
+    return render(
+        request,
+        'ice/report.html',
+        {
+            'years': range(2000, datetime.date.today().year + 1),
+            'seas': {
+                'bering': 'Берингово море',
+                'chukchi': 'Чукотское море',
+                'japan': 'Японское море',
+                'okhotsk': 'Охотское море'}
+        }
+    )
+
+
 def get_data_src(request, sea, data_type):
     file = open('ice/report/data/' + data_type + '/' + sea + '_' + data_type + '.csv', 'r')
 
@@ -216,5 +250,11 @@ def get_corr_zip(request):
 
 def get_forecast(request):
     file = open('ice/report/forecast/' + request.path.split('/')[-1], 'rb')
+
+    return HttpResponse(content=file, content_type='application/octet-stream')
+
+
+def get_pdf(request):
+    file = open('ice/report/report/' + request.path.split('/')[-1], 'rb')
 
     return HttpResponse(content=file, content_type='application/octet-stream')

@@ -1,0 +1,68 @@
+{% extends 'ice/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Отчеты{% endblock %}
+
+{% block style %}
+    <link rel="stylesheet" type="text/css"  href="{% static 'css/redmond/jquery-ui.min.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/redmond/jquery-ui.structure.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/redmond/jquery-ui.theme.css' %}"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'css/ui.jqgrid.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/selectric.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/data.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/correlation.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/forecast.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/report.css' %}"/>
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript" src="{% static 'js/jquery-ui.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.jqGrid.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/i18n/grid.locale-en.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/i18n/grid.locale-ru.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.selectric.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/report.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    {% load tags %}
+
+    <div class="data-type">{{ data_type }}</div>
+    <form action="{% url 'correlation' %}" method="get" class="filter">
+        {% csrf_token %}
+        <div class="chooses">
+            <div class="choose-list">
+                <label for="quater-choose">Квартал</label>
+                <select id="quater-choose">
+                    <option>I</option>
+                    <option>II</option>
+                    <option>III</option>
+                    <option>IV</option>
+                </select>
+            </div>
+            <div class="choose-list">
+                <label for="year-choose">Год</label>
+                <select id="year-choose">
+                    {% for year in years %}
+                        <option>{{ year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <span>Включаемые данные</span>
+        {% for en_sea, ru_sea in seas.items %}
+        <div class="{{ en_sea }}-checks">
+            <span>{{ ru_sea }}</span>
+            <label><input type="checkbox" checked="checked">Исходные данные</label>
+            <label><input type="checkbox" checked="checked">Усредненные данные</label>
+            <label><input type="checkbox" checked="checked">Поля корреляций</label>
+            <label><input type="checkbox" checked="checked">Квартальный прогноз</label>
+        </div>
+        {% endfor %}
+        <input class="send" type="button" value="Сформировать отчет">
+    </form>
+
+    <div class="hidden-img"></div>
+{% endblock %}

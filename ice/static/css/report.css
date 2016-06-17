@@ -1,0 +1,52 @@
+.chooses {
+    display: block;
+
+    height: 80px;
+}
+
+.bering-checks, .chukchi-checks, .japan-checks, .okhotsk-checks {
+    display: block;
+    float: left;
+
+    width: 250px;
+    height: 150px;
+}
+
+.bering-checks, .chukchi-checks, .japan-checks, .okhotsk-checks span, label  {
+    display: block;
+}
+
+span {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.bering-checks label, .chukchi-checks label, .japan-checks label, .okhotsk-checks label {
+    font-size: 15px;
+}
+
+.send {
+    margin-top: 0;
+}
+
+
+#pdf-download {
+    float: right;
+    margin: 0 80px 0 0;
+    padding: 8px;
+
+    width: 182px;
+    height: 20px;
+
+    font-size: 15px;
+
+    text-align: center;
+    text-decoration: none;
+    color: black;
+
+    outline: none;
+    cursor: pointer;
+
+    background-color: #F8F8F8;
+    border: 1px solid #C4C4C4;
+}

@@ -73,6 +73,26 @@ class Data:
 
     def data_processing(self, sea, year1, dec1, year2, dec2, prop):
         forecast_data = {}
+        season_data = {}
+        data = self.sea_data['mean']
+        for cur_sea in data.keys():
+            for cur_year in sorted(data[cur_sea]):
+                if cur_year > 1996:
+                    for cur_month in sorted(data[cur_sea][cur_year]):
+                        for cur_dec in sorted(data[cur_sea][cur_year][cur_month]):
+                            season_date = Estimation.get_season_date(cur_year, cur_month, cur_dec)
+                            if cur_sea not in season_data.keys():
+                                season_data[cur_sea] = {}
+                            if season_date['year'] not in season_data[cur_sea].keys():
+                                season_data[cur_sea][season_date['year']] = {}
+                            if season_date['month'] not in season_data[cur_sea][season_date['year']].keys():
+                                season_data[cur_sea][season_date['year']][season_date['month']] = {}
+                            if season_date['dec'] not in season_data[cur_sea][season_date['year']][
+                                season_date['month']].keys():
+                                season_data[cur_sea][season_date['year']][season_date['month']][
+                                    season_date['dec']] = \
+                                    data[cur_sea][cur_year][cur_month][cur_dec]
+
         for year in range(year1, year2 + 1):
             start_dec = dec1 if year == year1 else 1
             end_dec = dec2 if year == year2 else 36
@@ -83,7 +103,14 @@ class Data:
                 season_date = Estimation.get_season_date(year, month_dec['month'], month_dec['dec'])
                 season_date_glob_dec = Estimation.get_year_dec(season_date['month'], season_date['dec'])
                 f = Forecast()
-                cur_data = f.forecast(self.sea_data['mean'], prop, sea, season_date_glob_dec, season_date['year'], 10)
+                cur_data = f.forecast(season_data, prop, sea, season_date_glob_dec, season_date['year'], 10)
+
+                if season_date['year'] not in season_data[sea]:
+                    season_data[sea][season_date['year']] = {}
+                if season_date['month'] not in season_data[sea][season_date['year']]:
+                    season_data[sea][season_date['year']][season_date['month']] = {}
+                if season_date['dec'] not in season_data[sea][season_date['year']][season_date['month']]:
+                    season_data[sea][season_date['year']][season_date['month']][season_date['dec']] = {prop: cur_data[0]}
 
 
                 if month_dec['month'] not in forecast_decs.keys():

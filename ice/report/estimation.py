@@ -1,6 +1,6 @@
 from scipy.interpolate import interp1d
 from math import sqrt
-
+import datetime
 
 class Estimation:
     sea_area = {
@@ -192,6 +192,9 @@ class Estimation:
 
     @staticmethod
     def pirson_coeff(data2, data1, sea2, sea1, year, decs1, decs2, param):
+        if year >= sorted(data1.keys())[-1]:
+            year = sorted(data1.keys())[-1] - 1
+
         decs1, decs2 = sorted(decs1), sorted(decs2)
 
         Estimation.first_year = Estimation.start_shift(data1, data2, decs1, decs2)

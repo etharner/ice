@@ -127,50 +127,32 @@ class Forecast:
                 weight_rates += weighted * self.calc_rates(data, field_name, sea, dec, jb, je, l, u, last_year, prec, pair_coeffs, num)
                 #print(weight_rates)
 
-        #try:
-        result = 1.0 / weighted * weight_rates
-        #except:
-          #  result = 0.0
+        try:
+            result = 1.0 / weighted * weight_rates
+        except:
+            result = 0.0
 
         return result
 
 
     def forecast(self, data, field_name, sea, dec, last_year, prec):
-        season_data = {}
-        for cur_sea in data.keys():
-            for cur_year in sorted(data[cur_sea]):
-                if cur_year > 1996:
-                    for cur_month in sorted(data[cur_sea][cur_year]):
-                        for cur_dec in sorted(data[cur_sea][cur_year][cur_month]):
-                            season_date = est.get_season_date(cur_year, cur_month, cur_dec)
-                            if cur_sea not in season_data.keys():
-                                season_data[cur_sea] = {}
-                            if season_date['year'] not in season_data[cur_sea].keys():
-                                season_data[cur_sea][season_date['year']] = {}
-                            if season_date['month'] not in season_data[cur_sea][season_date['year']].keys():
-                                season_data[cur_sea][season_date['year']][season_date['month']] = {}
-                            if season_date['dec'] not in season_data[cur_sea][season_date['year']][season_date['month']].keys():
-                                season_data[cur_sea][season_date['year']][season_date['month']][season_date['dec']] = \
-                                    data[cur_sea][cur_year][cur_month][cur_dec]
-
-
         sea_pairs = []
-        for pair in itertools.product(season_data.keys(), repeat=2):
+        for pair in itertools.product(data.keys(), repeat=2):
             sea_pairs.append(pair)
 
         pair_coeffs = {}
         for sea_pair in sea_pairs:
             sea1, sea2 = sea_pair[0], sea_pair[1]
             pair_coeffs[sea_pair] = est.pirson_coeff(
-                season_data[sea2], season_data[sea1], sea2, sea1, last_year, range(1, dec + 1), range(1, dec + 1), field_name
+                data[sea2], data[sea1], sea2, sea1, last_year, range(1, dec + 1), range(1, dec + 1), field_name
             )
 
 
-        max_val_k = est.find_max_val(season_data[sea], field_name)
+        max_val_k = est.find_max_val(data[sea], field_name)
         print(max_val_k)
         states_k = [(max_val_k / prec * i) for i in range(prec + 1)]
 
-        for k in season_data.keys():
+        for k in data.keys():
             cur_glob_probs = {}
             for d in range(0, dec):
                 cur_glob_probs[d] = {}
@@ -178,7 +160,7 @@ class Forecast:
 
         probs = {}
         for j in range(len(states_k) - 1):
-            p = self.get_prob(season_data, field_name, sea, dec - 1, states_k[j], states_k[j + 1], last_year, prec, pair_coeffs, 1)
+            p = self.get_prob(data, field_name, sea, dec - 1, states_k[j], states_k[j + 1], last_year, prec, pair_coeffs, 1)
             probs[(states_k[j], states_k[j + 1])] = p
             print(str(states_k[j]) + ' | ' + str(states_k[j + 1]) + '| ' + str(p))
 
