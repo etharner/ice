@@ -81,3 +81,45 @@ def draw_correlation_field(coeffs, sea1, sea2, last_year, decs1, decs2, field_na
     #plt.show()
 
     return 'ice/correlation/img/' + gen_fname(sea1, sea2, last_year, decs1, field_name) + '.svg'
+
+
+def draw_correlation_field_png(coeffs, sea1, sea2, last_year, decs1, decs2, field_name):
+    plt.figure()
+    plt.hot()
+
+    im = plt.imshow(coeffs, interpolation='bilinear',
+                    origin='lower', cmap=cm.rainbow,
+                    extent=(decs1[0], decs1[-1], decs2[0], decs2[-1]))
+
+    levels = np.arange(-1.0, 1.0, 0.1)
+    CS = plt.contour(coeffs, levels,
+                     colors='black',
+                     origin='lower',
+                     linewidths=1,
+                     extent=(decs1[0], decs1[-1], decs2[0], decs2[-1]))
+    plt.clabel(CS, inline=1,
+               fontsize=10,
+              )
+    CB = plt.colorbar(im, shrink=0.2,
+                      extend='neither')
+
+    l, b, w, h = plt.gca().get_position().bounds
+    ll, bb, ww, hh = CB.ax.get_position().bounds
+    CB.ax.set_position([ll, b + 0.1 * h, ww, h * 0.8])
+
+    rus_seas = {
+        'bering': 'Берингово море',
+        'chukchi': 'Чукотское море',
+        'okhotsk': 'Охотское море',
+        'japan': 'Японское море'
+    }
+
+    fontprop = fm.FontProperties(fname="ice/report/DejaVuSans.ttf")
+    plt.xlabel(rus_seas[sea1], fontproperties=fontprop)
+    plt.ylabel(rus_seas[sea2], fontproperties=fontprop)
+
+    plt.title(create_title(sea1, sea2, decs1, field_name), fontproperties=fontprop)
+    savefig('ice/report/correlation/img/' + gen_fname(sea1, sea2, last_year, decs1, field_name) + '.png', bbox_inches='tight')
+    #plt.show()
+
+    return 'ice/correlation/img/' + gen_fname(sea1, sea2, last_year, decs1, field_name) + '.png'

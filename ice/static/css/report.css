@@ -30,7 +30,7 @@ span {
 }
 
 
-#pdf-download {
+#pdf-download, #tex-download {
     float: right;
     margin: 0 80px 0 0;
     padding: 8px;

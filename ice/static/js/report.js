@@ -69,6 +69,12 @@ $(function () {
                 zip.attr("href", data.pdf);
                 zip.text("Скачать .pdf");
                 zip.appendTo("form");
+
+                $("#tex-download").remove();
+                var zip = $('<a id="tex-download">');
+                zip.attr("href", data.tex);
+                zip.text("Скачать .tex");
+                zip.appendTo("form");
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 button.prop("disabled", false);
