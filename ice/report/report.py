@@ -29,21 +29,18 @@ def get_report(quater, year, checked):
     with doc.create(Section(bold('ОТЧЕТ за ' + rome_num[quater] + ' кв. ' + str(year) + 'г. лаборатории прикладной математики'
         ' по ледовой обстановке.'), numbering=False)):
 
-        #test
-        intro = 'Информация об общей площади льда и прогнозируемых значениях в Японском, '
-        'Охотском, Беринговом и Чукотском морях за ' + rome_num[quater] + ' кв. ' + str(year) + 'г.,'
-        ' полученных в результате обработки данных Национального ледового центра.'
-        purp = 'мониторинг состояния ледовой обстановки в Японском море, Охотском море, '
-        'Беринговом и Чукотском морях в ' + months[quater] + str(year) + 'г.' + ' и прогнозирование ледовой обстановки\n'
-        task = 'обработка и анализ данных о состоянии ледовой обстановки в Японском море, Охотском море, '
-        'Беринговом и Чукотском морях в ' + months[quater] + str(year) + 'г.' + ' и'
-        ' прогнозирование будущих значений\n'
+        with open('ice/report/report_phrase') as f:
+            lines = f.readlines()
 
-        with doc.create(Subsection(bold(intro.encode('utf-8')), numbering=False)):
-            doc.append(italic('Цель: '.encode('utf-8')))
-            doc.append(purp.encode('utf-8'))
-            doc.append(italic('Задачи: '.encode('utf-8')))
-            doc.append(task.encode('utf-8'))
+        intro = lines[0] + rome_num[quater] + lines[1] + str(year) + lines[2] + lines[3]
+        purp = lines[4] + lines[5] + months[quater] + str(year) + lines[6] + lines[8]
+        task = lines[9] + lines[10] + months[quater] + str(year) + lines[11] + lines[12] + lines[13]
+
+        with doc.create(Subsection(bold(intro), numbering=False)):
+            doc.append(italic(lines[14]))
+            doc.append(purp)
+            doc.append(italic(lines[15]))
+            doc.append(task)
 
         data = apps.get_app_config('ice').data.sea_data
         rus_sea = {
@@ -55,12 +52,11 @@ def get_report(quater, year, checked):
 
         for sea in ['bering', 'chukchi', 'japan', 'okhotsk']:
             if checked[sea]['source']:
-                msg = 'Была расчитана площадь ' + rus_sea[sea] + ('ова' if sea == 'bering' else 'ого') +\
-                ' моря в каждой декаде\n'
-                doc.append(msg.encode('utf-8'))
+                msg = lines[16] + rus_sea[sea] + ('ова' if sea == 'bering' else 'ого') + lines[17]
+                doc.append(msg)
                 with doc.create(Tabular('|l|c|')) as table:
                     table.add_hline()
-                    table.add_row(('Дата'.encode('utf-8'), 'Площадь льда, кв. км'.encode('utf-8')))
+                    table.add_row(('Дата', 'Площадь льда, кв. км'))
                     for cur_year in sorted(data['source'][sea]):
                         if cur_year == year:
                             for month in sorted(data['source'][sea][year]):
@@ -75,12 +71,11 @@ def get_report(quater, year, checked):
                 doc.append('\n\n')
 
             if checked[sea]['mean']:
-                msg = 'Была расчитана средняя площадь ' + rus_sea[sea] + ('ова' if sea == 'bering' else 'ого') +\
-                ' моря в каждой декаде\n'
-                doc.append(msg.encode('utf-8'))
+                msg = lines[18] + rus_sea[sea] + ('ова' if sea == 'bering' else 'ого') + lines[19]
+                doc.append(msg)
                 with doc.create(Tabular('|l|c|')) as table:
                     table.add_hline()
-                    table.add_row(('Дата'.encode('utf-8'), 'Площадь льда, кв. км'.encode('utf-8')))
+                    table.add_row(('Дата', 'Площадь льда, кв. км'))
                     for cur_year in sorted(data['mean'][sea]):
                         if cur_year == year:
                             for month in sorted(data['mean'][sea][year]):
@@ -95,10 +90,8 @@ def get_report(quater, year, checked):
                 doc.append('\n\n')
 
             if checked[sea]['corr']:
-                msg = 'Для анализа зависимостей развития ледовой обстановки в ' +\
-                rus_sea[sea] + ('овом' if sea == 'bering' else 'ом') + ' море были вычислены декадные ' +\
-                'корреляции попарно с остальными бассейнами'
-                doc.append(msg.encode('utf-8'))
+                msg = lines[20] + rus_sea[sea] + ('овом' if sea == 'bering' else 'ом') + lines[21]
+                doc.append(msg)
 
                 sea_pairs = []
                 for pair in itertools.product(data['normal'].keys(), repeat=2):
