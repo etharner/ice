@@ -14,5 +14,6 @@ urlpatterns = [
     url(r'^forecast$', views.forecast, name='forecast'),
     url(r'^ice/forecast/.*$', views.get_forecast, name='get_forecast'),
     url(r'^report$', views.report, name='report'),
-    url(r'^ice/report/.*$', views.get_pdf_tex, name='get_pdf_tex')
+    url(r'^ice/report/pdf/.*$', views.get_pdf, name='get_pdf'),
+    url(r'^ice/report/tex/.*$', views.get_tex, name='get_tex'),
 ]

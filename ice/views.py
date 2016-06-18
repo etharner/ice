@@ -207,8 +207,8 @@ def report(request):
 
             fname = r.get_report(quater, year, checked)
             return HttpResponse(json.dumps({
-                'pdf': 'ice/report/' + fname + '.pdf',
-                'tex': 'ice/report/' + fname + '.tex'
+                'pdf': 'ice/report/pdf/' + fname + '.pdf',
+                'tex': 'ice/report/tex/' + fname + '.tex'
             }), content_type="application/json")
 
     return render(
@@ -255,8 +255,14 @@ def get_forecast(request):
     return HttpResponse(content=file, content_type='application/octet-stream')
 
 
-def get_pdf_tex(request):
-    file = open('ice/report/report/' + request.path.split('/')[-1], 'rb')
+def get_pdf(request):
+    file = open('ice/report/report/pdf/' + request.path.split('/')[-1], 'rb')
+
+    return HttpResponse(content=file, content_type='application/octet-stream')
+
+
+def get_tex(request):
+    file = open('ice/report/report/tex/' + request.path.split('/')[-1], 'rb')
 
     return HttpResponse(content=file, content_type='application/octet-stream')
 
