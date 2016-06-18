@@ -20,13 +20,13 @@ class Data:
 
         for sea in self.seas:
             self.sea_data['source'][sea] = self.parsed_data(sea)
-            self.load_to_csv('source')
+            #self.load_to_csv('source')
 
             self.sea_data['mean'][sea] = self.mean_data(sea, copy.deepcopy(self.sea_data['source'][sea]))
-            self.load_to_csv('mean')
+            #self.load_to_csv('mean')
 
             self.sea_data['normal'][sea] = self.normal_data(sea, copy.deepcopy(self.sea_data['mean'][sea]))
-            self.load_to_csv('normal')
+            #self.load_to_csv('normal')
 
     def parsed_data(self, sea):
         return csv_parser.parse_data_csv(HTMLParser.parse_page()[sea])

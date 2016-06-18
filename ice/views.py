@@ -106,7 +106,7 @@ def correlation(request):
                 )
             except:
                 coeffs = [[0 for j in range(len(range(dec1, dec2 + 1)))] for i in range(len(range(dec1, dec2 + 1)))]
-            fname = graph.draw_correlation_field(coeffs, sea1, sea2, year, range(dec1, dec2 + 1), range(dec1, dec2 + 1), prop)
+            fname = graph.draw_correlation_field(coeffs, sea1, sea2, year, range(dec1, dec2 + 1), range(dec1, dec2 + 1), prop, '.svg')
 
             real_name = re.sub(r'.+/img/(.+)\.svg', r'\1', fname)
             real_img = re.sub(r'(.+)/correlation/(.+)\.svg', r'\1/report/correlation/\2.svg', fname)
