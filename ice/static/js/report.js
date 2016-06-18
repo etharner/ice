@@ -50,6 +50,13 @@ $(function () {
         button.val("Загрузка..");
         button.prop("disabled", true);
 
+        var pdf_button = $('#pdf-download');
+        var tex_button = $('#tex-download');
+        if (pdf_button)
+            pdf_button.text("Загрузка..");
+        if (tex_button)
+            tex_button.text("Загрузка..", true);
+
         $.ajax({
             type: "GET",
             url: window.location.pathname,
@@ -78,7 +85,10 @@ $(function () {
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 button.prop("disabled", false);
-                button.val(old);
+                button.val("Ошибка");
+
+                $("#pdf-download").remove();
+                $("#tex-download").remove();
 
                 console.log(xhr.status);
                 console.log(thrownError);

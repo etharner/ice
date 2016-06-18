@@ -141,7 +141,9 @@ $(function () {
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 button.prop("disabled", false);
-                button.val(old);
+                button.val("Ошибка");
+
+                $("#csv-download").remove();
 
                 console.log(xhr.status);
                 console.log(thrownError);
