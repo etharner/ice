@@ -149,7 +149,7 @@ class Forecast:
 
 
         max_val_k = est.find_max_val(data[sea], field_name)
-        print(max_val_k)
+        #print(max_val_k)
         states_k = [(max_val_k / prec * i) for i in range(prec + 1)]
 
         for k in data.keys():
