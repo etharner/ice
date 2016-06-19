@@ -14,7 +14,7 @@ from subprocess import call
 rome_num = {1: 'I', 2: 'II', 3: 'III', 4: 'IV'}
 months = {1: 'январе - марте ', 2: 'апреле - июне ', 3: 'июле - сентябре ', 4: 'октябре - декабре '}
 num_months = {1: range(1, 4), 2: range(4, 7), 3: range(7, 10), 4: range(10, 13)}
-quater_dec = {1: range(1, 10), 2: range(10, 19), 3: range(19, 28), 4: range(28, 37)}
+quater_dec = {1: range(1, 7), 2: range(10, 16), 3: range(19, 25), 4: range(28, 34)}
 rus_sea = {
     'bering': 'Беринг',
     'chukchi': 'Чукотск',
@@ -102,6 +102,29 @@ def gen_data_plot(doc, data, seas_data, sea, year, lines, quater, method):
     doc.append(comp_msg)
 
 
+def gen_forecast_table(doc, data, sea, lines, quater, year, prop):
+    msg = lines[33] + ' ' + rus_sea[sea] + ('ова' if sea == 'bering' else 'ого') + ' ' + lines[34] + ' ' + \
+          str(quater_dec[quater][0]) + ' ' + lines[35] + ' ' + str(quater_dec[quater][-1]) + ' ' + lines[36] + ' ' +\
+          str(year) + ' ' + lines[37]
+    doc.append(msg)
+
+    forecasted = apps.get_app_config('ice').data.data_processing(sea, year, quater_dec[quater][0], year, quater_dec[quater][-1], prop)
+
+    doc.append(Command('begin', arguments='center'))
+    with doc.create(Tabular('|l|c|')) as table:
+        table.add_hline()
+        table.add_row(('Дата', 'Площадь льда, кв. км (от - до)'))
+        for month in sorted(forecasted[year]):
+            for dec in sorted(forecasted[year][month]):
+                cur_data = forecasted[year][month][dec]
+                cur_date = str(year) + '-' + str(month) + '-' + str(dec)
+                cur_vals = str(cur_data[0]) + ' - ' + str(cur_data[1])
+                table.add_hline(1, 2)
+                table.add_row((cur_date, cur_vals))
+        table.add_hline(1, 2)
+    doc.append(Command('end', arguments='center'))
+
+
 def get_report(quater, year, checked):
     doc = Document(documentclass=Command('documentclass',
                options=Options('12pt', 'a4paper'),
@@ -164,6 +187,8 @@ def get_report(quater, year, checked):
                     gen_data_plot(doc, data, seas_data, sea, year, lines, quater, 'mean')
                 if checked[sea]['corr']:
                     gen_corr_grid(doc, lines, seas_corr, sea)
+                if checked[sea]['forecast']:
+                    gen_forecast_table(doc, data, sea, lines, quater, year, 'avg_area')
 
     doc.generate_tex('ice/report/report/tex/ice-' + str(year) + '-' + str(quater))
     doc.generate_pdf('ice/report/report/pdf/ice-' + str(year) + '-' + str(quater))
