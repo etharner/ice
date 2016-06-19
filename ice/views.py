@@ -203,7 +203,7 @@ def report(request):
                 if sea not in checked.keys():
                     checked[sea] = {}
                 for prop in ['source', 'mean', 'corr', 'forecast']:
-                    checked[sea][prop] = request.GET.get('checked[' + sea + '][' + prop + ']')
+                    checked[sea][prop] = int(request.GET.get('checked[' + sea + '][' + prop + ']'))
 
             fname = r.get_report(quater, year, checked)
             return HttpResponse(json.dumps({

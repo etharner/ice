@@ -1,5 +1,5 @@
 import matplotlib
-#matplotlib.use('SVG')
+matplotlib.use('Agg')
 from matplotlib.pylab import *
 from matplotlib import rc
 import matplotlib.font_manager as fm
@@ -84,28 +84,32 @@ def draw_correlation_field(coeffs, sea1, sea2, last_year, decs1, decs2, field_na
     return 'ice/correlation/img/' + gen_fname(sea1, sea2, last_year, decs1, field_name) + ext
 
 
-def draw_data(data, sea, method, prop):
+def draw_data(data, month_range, year_range, sea, method, prop):
+    month_range = [x for x in month_range]
+    year_range = [x for x in year_range]
+
     x = {}
     y = {}
 
     for year in sorted(data):
-        x[year] = []
-        y[year] = []
-        for month in sorted(data[year]):
-            for dec_day in sorted(data[year][month]):
-                if method == 'source':
-                    now = datetime.datetime.strptime(str(year) + '-' + str(month) + '-' + str(dec_day),'%Y-%m-%d')
-                    day_dec_of_year = (now - datetime.datetime(year, 1, 1)).days + 1
-                else:
-                    day_dec_of_year = Estimation.get_year_dec(month, dec_day)
+        if year in year_range:
+            x[year] = []
+            y[year] = []
+            for month in sorted(data[year]):
+                if month in month_range:
+                    for dec_day in sorted(data[year][month]):
+                        if method == 'source':
+                            now = datetime.datetime.strptime(str(year) + '-' + str(month) + '-' + str(dec_day),'%Y-%m-%d')
+                            day_dec_of_year = (now - datetime.datetime(year, 1, 1)).days + 1
+                        else:
+                            day_dec_of_year = Estimation.get_year_dec(month, dec_day)
 
-                print(day_dec_of_year)
-                cur_data = data[year][month][dec_day][prop]
-                x[year].append(day_dec_of_year)
-                y[year].append(cur_data)
+                        cur_data = data[year][month][dec_day][prop]
+                        x[year].append(day_dec_of_year)
+                        y[year].append(cur_data)
 
-    for year in sorted(data):
-        if year < sorted(data)[-1]:
+    for year in year_range:
+        if year < year_range[-1]:
             plt_color = '0.75'
             plt_width = 5.0
         else:
@@ -114,8 +118,6 @@ def draw_data(data, sea, method, prop):
 
         params = plt.plot(x[year], y[year])
         plt.setp(params, color=plt_color, linewidth=plt_width)
-
-    #plt.plot(*params)
 
     fontprop = fm.FontProperties(fname="ice/report/DejaVuSans.ttf")
 
@@ -143,7 +145,13 @@ def draw_data(data, sea, method, prop):
 
 
     plt.title(rus_method[method] + ('ый' if prop == 'vol' or prop == 'avg_vol' else 'ая') + ' ' +
-        rus_fields[prop] + ' ' + rus_seas[sea] + ' в ' + str(1997) + '-' + str(sorted(data)[-1]) + ' годах',
+        rus_fields[prop] + ' ' + rus_seas[sea] + ' в ' + str(1998) + '-' + str(year_range[-1]) + ' годах',
         fontproperties = fontprop)
     plt.grid(True)
-    plt.show()
+
+    savefig('ice/report/data/img/' + sea + '_' + method + '_' + prop + '.png', bbox_inches='tight')
+
+    plt.clf()
+    plt.close()
+
+    return '../../data/img/' + sea + '_' + method + '_' + prop + '.png'

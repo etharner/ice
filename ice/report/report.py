@@ -62,6 +62,16 @@ def gen_corr_grid(doc, lines, seas_corr, sea):
     doc.append(Command('end', arguments='center'))
 
 
+def gen_data_plot(doc, seas_data, sea, year, lines, quater, method):
+    msg = lines[20] + ' ' + rus_sea[sea] + ('ова' if sea == 'bering' else 'ого') + ' ' + lines[21] + ' ' +\
+    '1998-' + str(year) + ' ' + lines[22]
+
+    fname = seas_data[sea][method]
+
+    with doc.create(Figure(position='H')) as data_pic:
+        data_pic.add_image(fname, width='400px')
+
+
 def get_report(quater, year, checked):
     doc = Document(documentclass=Command('documentclass',
                options=Options('12pt', 'a4paper'),
@@ -79,6 +89,15 @@ def get_report(quater, year, checked):
             lines.append(line.strip())
 
     data = apps.get_app_config('ice').data.sea_data
+
+    seas_data = {}
+    for sea in data['normal'].keys():
+        norm_name = graph.draw_data(data['source'][sea], num_months[quater], range(1998, year + 1), sea, 'source', 'area')
+        mean_name = graph.draw_data(data['mean'][sea], num_months[quater], range(1998, year + 1), sea, 'mean', 'avg_area')
+        seas_data[sea] = {
+            'source': norm_name,
+            'mean': mean_name
+        }
 
     sea_pairs = []
     for pair in itertools.product(data['normal'].keys(), repeat=2):
@@ -109,8 +128,10 @@ def get_report(quater, year, checked):
             for sea in ['bering', 'chukchi', 'japan', 'okhotsk']:
                 if checked[sea]['source']:
                     gen_data_table(doc, data, sea, lines, quater, year, 'source')
+                    gen_data_plot(doc, seas_data, sea, year, lines, quater, 'source')
                 if checked[sea]['mean']:
                     gen_data_table(doc, data, sea, lines, quater, year, 'mean')
+                    gen_data_plot(doc, seas_data, sea, year, lines, quater, 'mean')
                 if checked[sea]['corr']:
                     gen_corr_grid(doc, lines, seas_corr, sea)
 
