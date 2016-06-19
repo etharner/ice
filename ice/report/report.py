@@ -120,10 +120,10 @@ def gen_forecast_table(doc, data, sea, lines, quater, year, prop, prec):
     with doc.create(Tabular('|l|c|')) as table:
         table.add_hline()
         table.add_row(('Дата', 'Площадь льда, кв. км (от - до)'))
-        for month in sorted(forecasted[year]):
-            for dec in sorted(forecasted[year][month]):
-                cur_data = forecasted[year][month][dec]
-                cur_date = str(year) + '-' + str(month) + '-' + str(dec)
+        for month in sorted(forecasted[year - 1]):
+            for dec in sorted(forecasted[year - 1][month]):
+                cur_data = forecasted[year - 1][month][dec]
+                cur_date = str(year - 1) + '-' + str(month) + '-' + str(dec)
                 cur_vals = str(cur_data[0]) + ' - ' + str(cur_data[1])
                 table.add_hline(1, 2)
                 table.add_row((cur_date, cur_vals))
