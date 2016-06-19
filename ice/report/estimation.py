@@ -247,3 +247,24 @@ class Estimation:
                         max_val = data[year][month][dec][field]
 
         return max_val
+
+    @staticmethod
+    def find_max_year_val(data, find_year, field):
+        max_val = 0
+        max_month = 1
+        max_dec_day = 1
+
+        for year in data:
+            if year == find_year:
+                for month in data[year]:
+                    for dec_day in data[year][month]:
+                        if data[year][month][dec_day][field] > max_val:
+                            max_val = data[year][month][dec_day][field]
+                            max_month = month
+                            max_dec_day = dec_day
+
+        return {
+            'max_val': max_val,
+            'max_month': max_month,
+            'max_dec_day': max_dec_day
+        }

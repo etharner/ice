@@ -21,6 +21,20 @@ rus_sea = {
     'japan': 'Японск',
     'okhotsk': 'Охотск'
 }
+rus_months = {
+    1: 'Января',
+    2: 'Февраля',
+    3: 'Марта',
+    4: 'Апреля',
+    5: 'Мая',
+    6: 'Июня',
+    7: 'Июля',
+    8: 'Августа',
+    9: 'Сентября',
+    10: 'Октября',
+    11: 'Ноября',
+    12: 'Декабря'
+}
 
 
 def gen_data_table(doc, data, sea, lines, quater, year, prop):
@@ -62,14 +76,30 @@ def gen_corr_grid(doc, lines, seas_corr, sea):
     doc.append(Command('end', arguments='center'))
 
 
-def gen_data_plot(doc, seas_data, sea, year, lines, quater, method):
+def gen_data_plot(doc, data, seas_data, sea, year, lines, quater, method):
     msg = lines[20] + ' ' + rus_sea[sea] + ('ова' if sea == 'bering' else 'ого') + ' ' + lines[21] + ' ' +\
     '1998-' + str(year) + ' ' + lines[22]
+    doc.append(msg)
 
     fname = seas_data[sea][method]
 
     with doc.create(Figure(position='H')) as data_pic:
         data_pic.add_image(fname, width='400px')
+
+    max_this_year = est.find_max_year_val(data[method][sea], year, ('area' if method == 'source' else 'avg_area'))
+    max_prev_year = est.find_max_year_val(data[method][sea], year - 1, ('area' if method == 'source' else 'avg_area'))
+    try:
+        perc = max_this_year['max_val'] / max_prev_year['max_val']
+    except:
+        perc = 0.0
+
+    perc *= 100
+
+    comp_msg = lines[23] + ' ' + rus_sea[sea] + ('ова' if sea == 'bering' else 'ого') + ' ' + lines[24] + ' ' +\
+               str(year) + lines[25] + ' ' + str(max_this_year['max_dec_day']) + ' ' + (lines[27] if method == 'source' else
+               lines[26]) + ' ' + rus_months[max_this_year['max_month']] + ' ' + lines[28] + ' ' + str(max_this_year['max_val']) +\
+               ' ' + lines[29] + ' ' + str("{0:.2f}".format(abs(100.0 - perc))) + (lines[30] if perc > 100.0 else lines[31]) + ' ' + lines[32]
+    doc.append(comp_msg)
 
 
 def get_report(quater, year, checked):
@@ -128,10 +158,10 @@ def get_report(quater, year, checked):
             for sea in ['bering', 'chukchi', 'japan', 'okhotsk']:
                 if checked[sea]['source']:
                     gen_data_table(doc, data, sea, lines, quater, year, 'source')
-                    gen_data_plot(doc, seas_data, sea, year, lines, quater, 'source')
+                    gen_data_plot(doc, data, seas_data, sea, year, lines, quater, 'source')
                 if checked[sea]['mean']:
                     gen_data_table(doc, data, sea, lines, quater, year, 'mean')
-                    gen_data_plot(doc, seas_data, sea, year, lines, quater, 'mean')
+                    gen_data_plot(doc, data, seas_data, sea, year, lines, quater, 'mean')
                 if checked[sea]['corr']:
                     gen_corr_grid(doc, lines, seas_corr, sea)
 
