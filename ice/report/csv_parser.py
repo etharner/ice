@@ -64,7 +64,7 @@ def parse_data_csv(fnames):
 def parse_zeros_csv():
     data = {}
 
-    with open('ice/report/zeros.csv') as file:
+    with open('zeros.csv') as file:
         csvfile =list(csv.reader(file))
         csvfile.pop(0)  # remove 'date;area;concentration;volume' string
         for row in csvfile:

@@ -121,3 +121,15 @@ class Data:
 
         print(forecast_data)
         return forecast_data
+
+def forecast_test1():
+    data = Data()
+    new_data = {}
+    for year in data.sea_data['mean']['bering']:
+        if int(year) < 2004:
+            new_data[year] = data.sea_data['mean']['bering'][year]
+
+    data.sea_data['mean']['bering'] = new_data
+    data.data_processing('bering', 2003, 1, 2003, 4, 'avg_area', 10)
+
+forecast_test1()

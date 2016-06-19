@@ -22,18 +22,18 @@ rus_sea = {
     'okhotsk': 'Охотск'
 }
 rus_months = {
-    1: 'Января',
-    2: 'Февраля',
-    3: 'Марта',
-    4: 'Апреля',
-    5: 'Мая',
-    6: 'Июня',
-    7: 'Июля',
-    8: 'Августа',
-    9: 'Сентября',
-    10: 'Октября',
-    11: 'Ноября',
-    12: 'Декабря'
+    1: 'января',
+    2: 'февраля',
+    3: 'марта',
+    4: 'апреля',
+    5: 'мая',
+    6: 'июня',
+    7: 'июля',
+    8: 'августа',
+    9: 'сентября',
+    10: 'октября',
+    11: 'ноября',
+    12: 'декабря'
 }
 
 
@@ -103,12 +103,18 @@ def gen_data_plot(doc, data, seas_data, sea, year, lines, quater, method):
 
 
 def gen_forecast_table(doc, data, sea, lines, quater, year, prop, prec):
+    if quater + 1 <= 4:
+        fore_q = quater + 1
+    else:
+        year += 1
+        fore_q = 1
+
     msg = lines[33] + ' ' + rus_sea[sea] + ('ова' if sea == 'bering' else 'ого') + ' ' + lines[34] + ' ' + \
-          str(quater_dec[quater][0]) + ' ' + lines[35] + ' ' + str(quater_dec[quater][-1]) + ' ' + lines[36] + ' ' +\
+          str(quater_dec[fore_q][0]) + ' ' + lines[35] + ' ' + str(quater_dec[fore_q][-1]) + ' ' + lines[36] + ' ' +\
           str(year) + ' ' + lines[37]
     doc.append(msg)
 
-    forecasted = apps.get_app_config('ice').data.data_processing(sea, year, quater_dec[quater][0], year, quater_dec[quater][-1], prop, prec)
+    forecasted = apps.get_app_config('ice').data.data_processing(sea, year - 1, quater_dec[fore_q][0], year - 1, quater_dec[fore_q][-1], prop, prec)
 
     doc.append(Command('begin', arguments='center'))
     with doc.create(Tabular('|l|c|')) as table:
@@ -188,7 +194,7 @@ def get_report(quater, year, checked):
                 if checked[sea]['corr']:
                     gen_corr_grid(doc, lines, seas_corr, sea)
                 if checked[sea]['forecast']:
-                    gen_forecast_table(doc, data, sea, lines, quater, year, 'avg_area', 20)
+                    gen_forecast_table(doc, data, sea, lines, quater, year, 'avg_area', 10)
 
     doc.generate_tex('ice/report/report/tex/ice-' + str(year) + '-' + str(quater))
     doc.generate_pdf('ice/report/report/pdf/ice-' + str(year) + '-' + str(quater))
