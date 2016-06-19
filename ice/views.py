@@ -158,8 +158,9 @@ def forecast(request):
             year2 = int(request.GET.get('year2'))
             dec2 = int(request.GET.get('dec2'))
             prop = rus_prop[request.GET.get('prop')]
+            prec = int(request.GET.get('prec'))
 
-            data = apps.get_app_config('ice').data.data_processing(sea, year1, dec1, year2, dec2, prop)
+            data = apps.get_app_config('ice').data.data_processing(sea, year1, dec1, year2, dec2, prop, prec)
 
             real_name = 'ice/report/forecast/fcst_' + sea + '_' + str(year1) + '_' + str(dec1) + '-' +\
                 str(year2) + '_' + str(dec2) + '_' + prop + '.csv'
@@ -186,7 +187,8 @@ def forecast(request):
             'data_type': 'Прогнозирование ледовой обстановки',
             'start_years': range(2000, datetime.date.today().year + 1),
             'end_years': range(2000, 2021),
-            'decs': range(1, 37)
+            'decs': range(1, 37),
+            'precs': [10, 20, 50, 100]
         }
     )
 

@@ -76,6 +76,14 @@
                     <option>Объем</option>
                 </select>
             </div>
+            <div class="choose-list">
+                <label for="prec-choose">Точность</label>
+                <select id="prec-choose">
+                    {% for prec in precs %}
+                        <option>{{ prec }}</option>
+                    {% endfor %}
+                </select>
+            </div>
         </div>
         <input class="send" type="button" value="Получить значения">
     </form>

@@ -71,7 +71,7 @@ class Data:
 
         return normalized_data
 
-    def data_processing(self, sea, year1, dec1, year2, dec2, prop):
+    def data_processing(self, sea, year1, dec1, year2, dec2, prop, prec):
         forecast_data = {}
         season_data = {}
         data = self.sea_data['mean']
@@ -103,7 +103,7 @@ class Data:
                 season_date = Estimation.get_season_date(year, month_dec['month'], month_dec['dec'])
                 season_date_glob_dec = Estimation.get_year_dec(season_date['month'], season_date['dec'])
                 f = Forecast()
-                cur_data = f.forecast(season_data, prop, sea, season_date_glob_dec, season_date['year'], 10)
+                cur_data = f.forecast(season_data, prop, sea, season_date_glob_dec, season_date['year'], prec)
 
                 if season_date['year'] not in season_data[sea]:
                     season_data[sea][season_date['year']] = {}

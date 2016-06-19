@@ -26,6 +26,7 @@ span {
 }
 
 .send {
+    float: left;
     margin-top: 0;
 }
 

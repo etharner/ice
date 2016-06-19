@@ -108,6 +108,7 @@ $(function () {
         var year2 = $("#date2-year-choose").find('option:selected').text();
         var dec2 = $("#date2-dec-choose").find('option:selected').text();
         var prop = $("#prop-choose").find('option:selected').text();
+        var prec = $("#prec-choose").find('option:selected').text();
 
         var button = $(this);
         var old = button.val();
@@ -124,6 +125,7 @@ $(function () {
                 year2: year2,
                 dec2: dec2,
                 prop: prop,
+                prec: prec,
                 action: "forecast",
                 csrfmiddlewaretoken: csrftoken
             },

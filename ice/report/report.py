@@ -102,13 +102,13 @@ def gen_data_plot(doc, data, seas_data, sea, year, lines, quater, method):
     doc.append(comp_msg)
 
 
-def gen_forecast_table(doc, data, sea, lines, quater, year, prop):
+def gen_forecast_table(doc, data, sea, lines, quater, year, prop, prec):
     msg = lines[33] + ' ' + rus_sea[sea] + ('ова' if sea == 'bering' else 'ого') + ' ' + lines[34] + ' ' + \
           str(quater_dec[quater][0]) + ' ' + lines[35] + ' ' + str(quater_dec[quater][-1]) + ' ' + lines[36] + ' ' +\
           str(year) + ' ' + lines[37]
     doc.append(msg)
 
-    forecasted = apps.get_app_config('ice').data.data_processing(sea, year, quater_dec[quater][0], year, quater_dec[quater][-1], prop)
+    forecasted = apps.get_app_config('ice').data.data_processing(sea, year, quater_dec[quater][0], year, quater_dec[quater][-1], prop, prec)
 
     doc.append(Command('begin', arguments='center'))
     with doc.create(Tabular('|l|c|')) as table:
@@ -188,7 +188,7 @@ def get_report(quater, year, checked):
                 if checked[sea]['corr']:
                     gen_corr_grid(doc, lines, seas_corr, sea)
                 if checked[sea]['forecast']:
-                    gen_forecast_table(doc, data, sea, lines, quater, year, 'avg_area')
+                    gen_forecast_table(doc, data, sea, lines, quater, year, 'avg_area', 20)
 
     doc.generate_tex('ice/report/report/tex/ice-' + str(year) + '-' + str(quater))
     doc.generate_pdf('ice/report/report/pdf/ice-' + str(year) + '-' + str(quater))
