@@ -38,7 +38,7 @@ $(function () {
         for (var i = 0; i < seas.length; i++) {
             checked[seas[i]] = {};
             $("." + seas[i] + "-checks label").each(function () {
-                checked[seas[i]][checkboxes[$(this).text()]] = $(this).children().attr("checked") == 'checked' ? 1 : 0;
+                checked[seas[i]][checkboxes[$(this).text()]] = $(this).children().prop( "checked") == true ? 1 : 0;
             });
         }
 
