@@ -122,14 +122,48 @@ class Data:
         print(forecast_data)
         return forecast_data
 
-def forecast_test1():
+def forecast_test(sea, year1, dec1, year2, dec2, prec):
     data = Data()
+    old_data = copy.deepcopy(data.sea_data['mean'][sea])
     new_data = {}
-    for year in data.sea_data['mean']['bering']:
-        if int(year) < 2004:
-            new_data[year] = data.sea_data['mean']['bering'][year]
+    for year in data.sea_data['mean'][sea]:
+        if int(year) < year1:
+            new_data[year] = data.sea_data['mean'][sea][year]
 
-    data.sea_data['mean']['bering'] = new_data
-    data.data_processing('bering', 2003, 1, 2003, 4, 'avg_area', 10)
+    data.sea_data['mean'][sea] = new_data
+    forecasted = data.data_processing(sea, year1, dec1, year2, dec2, 'avg_area', prec)
 
-forecast_test1()
+    test_num = dec2 - dec1 + 1
+    succ_num = 0
+    for month in forecasted[year1]:
+        for dec in forecasted[year1][month]:
+            cur_val = forecasted[year1][month][dec]
+            if old_data[year1][month][dec]['avg_area'] >= cur_val[0] and old_data[year1][month][dec]['avg_area'] <= cur_val[1]:
+                succ_num += 1
+
+    print(str(year1) + ':' + '%.2f' % (succ_num / test_num * 100) + '%')
+    return succ_num / test_num * 100
+
+
+def test(sea, prec):
+    perc_sum = 0
+    for year in range(2000, 2015):
+        perc_sum += forecast_test(sea, year, 1, year, 36, prec)
+
+    print('GLOBAL ' + sea + ' prec: ' + str(prec) + ' => ' + '%.2f' % (perc_sum / 15) + '%')
+
+forecast_test('bering', 2012, 1, 2012, 36, 100)
+
+#42.024
+#test('bering', 10)
+#57.59%
+#test('chukchi', 10)
+#32.78%
+#test('japan', 10)
+#42.78%
+#test('okhotsk', 10)
+
+#test('bering', 20)
+#test('chukchi', 20)
+#test('japan', 20)
+#test('okhotsk', 20)

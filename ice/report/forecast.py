@@ -144,7 +144,7 @@ class Forecast:
         for sea_pair in sea_pairs:
             sea1, sea2 = sea_pair[0], sea_pair[1]
             pair_coeffs[sea_pair] = est.pirson_coeff(
-                data[sea2], data[sea1], sea2, sea1, last_year, range(1, dec + 1), range(1, dec + 1), field_name
+                data[sea2], data[sea1], sea2, sea1, last_year - 1, range(1, dec + 1), range(1, dec + 1), field_name
             )
 
 
@@ -162,6 +162,6 @@ class Forecast:
         for j in range(len(states_k) - 1):
             p = self.get_prob(data, field_name, sea, dec - 1, states_k[j], states_k[j + 1], last_year, prec, pair_coeffs, 1)
             probs[(states_k[j], states_k[j + 1])] = p
-            print(str(states_k[j]) + ' | ' + str(states_k[j + 1]) + '| ' + str(p))
+            #print(str(states_k[j]) + ' | ' + str(states_k[j + 1]) + '| ' + str(p))
 
         return max(probs, key=probs.get)
