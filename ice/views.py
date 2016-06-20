@@ -51,7 +51,7 @@ def sources(request):
     return proceed_response(
         request,
         'source',
-        json.dumps(['Год-Месяц-День', 'Площадь', 'Площадь с учетом сплоченности', 'Объем']),
+        json.dumps(['Год-Месяц-День', 'Площадь кв. км', 'Площадь с учетом сплоченности кв. км', 'Объем куб. км']),
         json.dumps(['area', 'conc', 'vol'])
     )
 
@@ -60,7 +60,11 @@ def mean(request):
     return proceed_response(
         request,
         'mean',
-        json.dumps(['Год-Месяц-Декада', 'Средняя площадь', 'Средняя площадь с учетом сплоченности', 'Средний объем']),
+        json.dumps([
+            'Год-Месяц-Декада',
+            'Средняя площадь кв. км',
+            'Средняя площадь с учетом сплоченности кв. км',
+            'Средний объем куб. км']),
         json.dumps(['avg_area', 'avg_conc', 'avg_vol'])
     )
 
@@ -69,7 +73,7 @@ def normal(request):
     return proceed_response(
         request,
         'normal',
-        json.dumps(['Год-Месяц-Декада', 'Площадь', 'Площадь с учетом сплоченности', 'Объем']),
+        json.dumps(['Год-Месяц-Декада', 'Площадь кв. км', 'Площадь с учетом сплоченности кв. км', 'Объем куб. км']),
         json.dumps(['avg_area', 'avg_conc', 'avg_vol'])
     )
 
