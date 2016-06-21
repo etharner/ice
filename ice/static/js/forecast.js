@@ -16,7 +16,7 @@ function getCookie(name) {
 var csrftoken = getCookie('csrftoken');
 
 function build_grid(data) {
-    var colNames = ['Год-месяц-декада', 'Значение'];
+    var colNames = ['Год-месяц-декада', 'Значение (от - до)'];
     var colModel = [
         {label: 'date', name: 'date', width: 90, sorttype: 'date', datefmt: 'Y-m-d'},
         {label: 'val', name: 'val', width: 80, sorttype: 'string'}
@@ -33,7 +33,7 @@ function build_grid(data) {
                             var table_row = {
                                 date: year + "-" + month + "-" + day_dec
                             };
-                            table_row['val'] = String(data_dump[0] + ":" + data_dump[1]);
+                            table_row['val'] = String(data_dump[0] + " - " + data_dump[1]);
                             gridData.push(table_row);
                         }
     $.jgrid.gridUnload("#list");
