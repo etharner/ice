@@ -152,7 +152,7 @@ def test(sea, prec):
 
     print('GLOBAL ' + sea + ' prec: ' + str(prec) + ' => ' + '%.2f' % (perc_sum / 15) + '%')
 
-forecast_test('bering', 2012, 1, 2012, 36, 100)
+#forecast_test('bering', 2012, 1, 2012, 36, 100)
 
 #42.024
 #test('bering', 10)
