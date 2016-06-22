@@ -69,5 +69,5 @@ If server is down, run:
 ```sh
 $ export PYTHONPATH="/var/www/ice/ice/report/:/var/www/ice/"
 $ iptables -I INPUT -p tcp --dport 80 -j ACCEPT
-$ python3.4 manage.py runserver 0.0.0.0:80
+$ python3.4 /var/www/ice/manage.py runserver 0.0.0.0:80
 ```
