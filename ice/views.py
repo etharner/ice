@@ -15,6 +15,7 @@ def prepare_response_data(method, sea_name):
     app_data = apps.get_app_config('ice')
     if datetime.datetime.today().date() > app_data.date:
         app_data.receive_data()
+        app_data.date =  datetime.datetime.today()
 
     data = app_data.data.sea_data
 
