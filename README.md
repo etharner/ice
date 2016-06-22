@@ -63,3 +63,11 @@ WSGIPythonPath /var/www/ice
 </VirtualHost>
 ```
 ## Dont forget to run ./manage.py collectstatic!
+
+##Known problems (TINRO-Center)
+If server is down, run:
+```sh
+$ export PYTHONPATH="/var/www/ice/ice/report/:/var/www/ice/"
+$ iptables -I INPUT -p tcp --dport 80 -j ACCEPT
+$ python3.4 manage.py runserver 0.0.0.0:80
+```
