@@ -2,11 +2,12 @@ from lxml.html import parse
 import re
 
 class HTMLParser:
-    site = 'http://ice-data.tinro.ru/'
+    #site = 'http://ice-data.tinro.ru/'
+    site = http://192.168.2.33/
 
     @staticmethod
     def parse_page():
-        page = parse('http://ice-data.tinro.ru/')
+        page = parse(site)
         urls = page.xpath('//a/@href')
 
         data_urls = {}
