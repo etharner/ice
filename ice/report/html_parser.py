@@ -3,7 +3,7 @@ import re
 
 class HTMLParser:
     #site = 'http://ice-data.tinro.ru/'
-    site = http://192.168.2.33/
+    site = 'http://192.168.2.33/'
 
     @staticmethod
     def parse_page():
