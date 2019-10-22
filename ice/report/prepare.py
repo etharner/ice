@@ -1,5 +1,5 @@
-import csv_parser
-from estimation import Estimation as est
+import ice.report.csv_parser as csv_parser
+from ice.report.estimation import Estimation as est
 
 def append_to_data(data, year, month, day_or_dec, dict):
     if year not in data.keys():

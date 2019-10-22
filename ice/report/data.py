@@ -1,10 +1,10 @@
-from html_parser import HTMLParser
-import csv_parser
-import prepare
-from estimation import Estimation
+from ice.report.html_parser import HTMLParser
+import ice.report.csv_parser as csv_parser
+import ice.report.prepare as prepare
+from ice.report.estimation import Estimation
 import copy
-import graph
-from forecast import Forecast
+import ice.report.graph as graph
+from ice.report.forecast import Forecast
 from django.apps import apps
 
 
@@ -18,7 +18,10 @@ class Data:
             'normal': {}
         }
 
+        self.parsed_page = HTMLParser.parse_page()
+
         for sea in self.seas:
+            print('Fetching ' + sea)
             self.sea_data['source'][sea] = self.parsed_data(sea)
             #self.load_to_csv('source')
 
@@ -29,7 +32,7 @@ class Data:
             #self.load_to_csv('normal')
 
     def parsed_data(self, sea):
-        return csv_parser.parse_data_csv(HTMLParser.parse_page()[sea])
+        return csv_parser.parse_data_csv(self.parsed_page[sea])
 
     def mean_data(self, sea, parsed_data):
         mean_data = prepare.decade_average(parsed_data)
@@ -57,7 +60,7 @@ class Data:
                             fo.write(cur_date + cur_vals + '\n')
 
     def prep_data(self, sea):
-        parsed_data = csv_parser.parse_data_csv(HTMLParser.parse_page()[sea])
+        parsed_data = csv_parser.parse_data_csv(self.parsed_page[sea])
         #self.print_data_to_file(parsed_data, 'parsed_' + sea + '.txt')
 
         mean_data = prepare.decade_average(parsed_data)

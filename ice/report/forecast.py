@@ -1,5 +1,5 @@
 import itertools
-from estimation import Estimation as est
+from ice.report.estimation import Estimation as est
 
 
 class Forecast:

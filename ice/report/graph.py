@@ -4,7 +4,7 @@ from matplotlib.pylab import *
 from matplotlib import rc
 import matplotlib.font_manager as fm
 import datetime
-from estimation import Estimation
+from ice.report.estimation import Estimation
 
 def create_title(sea1, sea2, decs, field_name):
     rus_seas = {

@@ -1,13 +1,15 @@
 from lxml.html import parse
+from urllib.request import Request, urlopen
 import re
 
 class HTMLParser:
-    #site = 'http://ice-data.tinro.ru/'
-    site = 'http://192.168.2.33/'
+    site = 'http://ice-data.tinro.ru/'
+    #site = 'http://192.168.2.33/'
 
     @staticmethod
     def parse_page():
-        page = parse(site)
+        req = Request(HTMLParser.site, headers={'User-Agent': 'Mozilla/5.0'})
+        page = parse(urlopen(req))
         urls = page.xpath('//a/@href')
 
         data_urls = {}

@@ -5,8 +5,8 @@ from pylatex.base_classes import *
 from pylatex.utils import italic, bold
 from django.apps import apps
 import itertools
-from estimation import Estimation as est
-import graph
+from ice.report.estimation import Estimation as est
+import ice.report.graph as graph
 import re
 import os
 from subprocess import call

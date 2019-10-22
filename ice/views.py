@@ -7,8 +7,8 @@ import zipfile
 from os.path import basename
 from ice.report.estimation import Estimation
 from django.shortcuts import HttpResponse
-import graph
-import report as r
+import ice.report.graph as graph
+import ice.report.report as r
 
 
 def prepare_response_data(method, sea_name):

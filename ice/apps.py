@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 from datetime import date
-from data import Data
+from ice.report.data import Data
 
 
 class IceConfig(AppConfig):

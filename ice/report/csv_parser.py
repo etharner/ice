@@ -2,7 +2,8 @@ import csv
 import codecs
 from urllib.request import urlopen
 import re
-import prepare
+from pathlib import Path
+import ice.report.prepare as prepare
 
 
 def format_date(raw_date):
@@ -63,8 +64,9 @@ def parse_data_csv(fnames):
 
 def parse_zeros_csv():
     data = {}
-
-    with open('zeros.csv') as file:
+    
+    zeros_file = Path(__file__).absolute().parent / 'zeros.csv'
+    with zeros_file.open() as file:
         csvfile =list(csv.reader(file))
         csvfile.pop(0)  # remove 'date;area;concentration;volume' string
         for row in csvfile:
